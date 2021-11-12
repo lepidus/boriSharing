@@ -25,7 +25,20 @@ class SubmissionSharer {
         return $this->recipient;
     }
 
-    public function getSubject(): string {
+    public function getEmailSubject(): string {
         return "Artigo {$this->submissionToShare->getId()} aprovado na revista {$this->submissionToShare->getJournalInitials()}";
+    }
+
+    public function getEmailBody(): string {
+        $emailBody = "Sigla do periódico: {$this->submissionToShare->getJournalInitials()}\n";
+        $emailBody .= "Identificador do artigo: {$this->submissionToShare->getId()}\n";
+        $emailBody .= "Título do artigo: {$this->submissionToShare->getTitle()}\n";
+        $emailBody .= "Resumo/abstract  {$this->submissionToShare->getAbstract()}\n";
+        $emailBody .= "Nome dos autores: {$this->submissionToShare->getAuthorsAsRecord()}\n";
+        $emailBody .= "Instituição de pesquisa: {$this->submissionToShare->getResearchInstitution()}\n";
+        $emailBody .= "Data de aprovação: {$this->submissionToShare->getDateAccepted()}\n";
+        $emailBody .= "Editor da revista (ou responsável por aprovar o artigo): {$this->submissionToShare->getEditor()->asRecord()}\n";
+        
+        return $emailBody;
     }
 }

@@ -10,12 +10,16 @@ class Person {
         $this->email = $email;
     }
 
-    public function getName() {
+    public function getName(): string {
         return $this->name;
     }
 
-    public function getEmail() {
+    public function getEmail(): string {
         return $this->email;
     }
     
+    public function asRecord(): string {
+        return "{$this->name} ({$this->email})";
+    }
+
 }

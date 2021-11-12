@@ -75,4 +75,14 @@ class SubmissionToShare {
     public function setAuthors(array $authors) {
         $this->authors = $authors;
     }
+
+    public function getAuthorsAsRecord(): string {
+        $records = [];
+        
+        foreach($this->authors as $author) {
+            $records[] = $author->asRecord();
+        }
+
+        return implode(", ", $records);
+    }
 }

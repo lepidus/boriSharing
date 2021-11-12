@@ -52,10 +52,23 @@ class SubmissionSharerTest extends TestCase {
         $this->assertEquals($this->recipient, $this->submissionSharer->getRecipient());
     }
 
-    public function testSharerWritesSubject(): void {
+    public function testSharerWritesEmailSubject(): void {
         $expectedSubject = "Artigo 3532 aprovado na revista RBFG";
 
-        $this->assertEquals($expectedSubject, $this->submissionSharer->getSubject());
+        $this->assertEquals($expectedSubject, $this->submissionSharer->getEmailSubject());
+    }
+
+    public function testSharerWritesEmailBody(): void {
+        $expectedBody = "Sigla do periódico: RBFG\n";
+        $expectedBody .= "Identificador do artigo: 3532\n";
+        $expectedBody .= "Título do artigo: O caso dos cones mágicos\n";
+        $expectedBody .= "Resumo/abstract  Uma história das formas geométricas cônicas e suas aplicações na terra média.\n";
+        $expectedBody .= "Nome dos autores: Juliana Bolseiro (jubolseiro@lepidus.com.br), Saruman Medeiros (saruman@lepidus.com.br)\n";
+        $expectedBody .= "Instituição de pesquisa: Lepidus\n";
+        $expectedBody .= "Data de aprovação: 11/11/2021\n";
+        $expectedBody .= "Editor da revista (ou responsável por aprovar o artigo): João Gandalf (joaogandalf@lepidus.com.br)\n";
+
+        $this->assertEquals($expectedBody, $this->submissionSharer->getEmailBody());
     }
 
 }

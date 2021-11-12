@@ -19,4 +19,9 @@ class PersonTest extends TestCase {
     public function testPersonHasEmail(): void {
         $this->assertEquals($this->email,$this->person->getEmail());
     }
+
+    public function testPersonAsRecord(): void {
+        $expectedRecord = "Jimi Hendrix (jimi.hendrix@woodstock.com)";
+        $this->assertEquals($expectedRecord,$this->person->asRecord());
+    }
 }

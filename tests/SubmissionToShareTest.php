@@ -64,4 +64,10 @@ class SubmissionToShareTest extends TestCase {
     public function testSubmissionHasAuthors(): void {
         $this->assertEquals($this->authors, $this->submissionToShare->getAuthors());
     }
+
+    public function testSubmissionAuthorsAsRecord(): void {
+        $expectedRecord = $this->authors[0]->asRecord() . ", " . $this->authors[1]->asRecord();
+
+        $this->assertEquals($expectedRecord, $this->submissionToShare->getAuthorsAsRecord());
+    }
 }
