@@ -1,10 +1,16 @@
 <?php
+import ('plugins.generic.boriSharing.classes.Person');
 
 class SubmissionToShare {
 
     private $id;
     private $title;
     private $abstract;
+    private $journalInitials;
+    private $dateAccepted;
+    private $researchInstitution;
+    private $editor;
+    private $authors;
 
     public function getId(): int {
         return $this->id;
@@ -30,4 +36,43 @@ class SubmissionToShare {
         $this->abstract = $abstract;
     }
 
+    public function getJournalInitials(): string {
+        return $this->journalInitials;
+    }
+
+    public function setJournalInitials(string $journalInitials) {
+        $this->journalInitials = $journalInitials;
+    }
+
+    public function getDateAccepted(): string {
+        return $this->dateAccepted->format("d/m/Y");
+    }
+
+    public function setDateAccepted(string $dateAccepted) {
+        $this->dateAccepted = new DateTime($dateAccepted);
+    }
+
+    public function getResearchInstitution(): string {
+        return $this->researchInstitution;
+    }
+
+    public function setResearchInstitution(string $researchInstitution) {
+        $this->researchInstitution = $researchInstitution;
+    }
+    
+    public function getEditor(): Person {
+        return $this->editor;
+    }
+
+    public function setEditor(Person $editor) {
+        $this->editor = $editor;
+    }
+
+    public function getAuthors(): array {
+        return $this->authors;
+    }
+
+    public function setAuthors(array $authors) {
+        $this->authors = $authors;
+    }
 }
