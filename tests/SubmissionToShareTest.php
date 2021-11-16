@@ -2,6 +2,7 @@
 use PHPUnit\Framework\TestCase;
 import ('plugins.generic.boriSharing.classes.SubmissionToShare');
 import ('plugins.generic.boriSharing.classes.Person');
+import ('plugins.generic.boriSharing.classes.SubmissionGalley');
 
 error_log("------- TESTES DO BORI SHARING ---------");
 
@@ -17,10 +18,12 @@ class SubmissionToShareTest extends TestCase {
     private $researchInstitution = "Lepidus";
     private $editor;
     private $authors;
+    private $galley;
 
     public function setUp(): void {
         $this->editor = new Person("João Gandalf", "joaogandalf@lepidus.com.br");
         $this->authors = [new Person("Juliana Bolseiro", "jubolseiro@lepidus.com.br"), new Person("Saruman Medeiros", "saruman@lepidus.com.br")];
+        $this->galley = new SubmissionGalley("/public/journals/00/article.pdf", "Final Article");
         $this->submissionToShare = new SubmissionToShare();
         
         $this->submissionToShare->setId($this->submissionId);
@@ -31,6 +34,7 @@ class SubmissionToShareTest extends TestCase {
         $this->submissionToShare->setResearchInstitution($this->researchInstitution);
         $this->submissionToShare->setEditor($this->editor);
         $this->submissionToShare->setAuthors($this->authors);
+        $this->submissionToShare->setGalley($this->galley);
     }
 
     public function testSubmissionHasId(): void {
@@ -63,6 +67,10 @@ class SubmissionToShareTest extends TestCase {
 
     public function testSubmissionHasAuthors(): void {
         $this->assertEquals($this->authors, $this->submissionToShare->getAuthors());
+    }
+
+    public function testSubmissionHasGalley(): void {
+        $this->assertEquals($this->galley, $this->submissionToShare->getGalley());
     }
 
     public function testSubmissionAuthorsAsRecord(): void {

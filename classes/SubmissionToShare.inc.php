@@ -1,5 +1,6 @@
 <?php
 import ('plugins.generic.boriSharing.classes.Person');
+import ('plugins.generic.boriSharing.classes.SubmissionGalley');
 
 class SubmissionToShare {
 
@@ -11,6 +12,7 @@ class SubmissionToShare {
     private $researchInstitution;
     private $editor;
     private $authors;
+    private $galley;
 
     public function getId(): int {
         return $this->id;
@@ -74,6 +76,14 @@ class SubmissionToShare {
 
     public function setAuthors(array $authors) {
         $this->authors = $authors;
+    }
+
+    public function getGalley(): SubmissionGalley {
+        return $this->galley;
+    }
+
+    public function setGalley(SubmissionGalley $galley) {
+        $this->galley = $galley;
     }
 
     public function getAuthorsAsRecord(): string {
