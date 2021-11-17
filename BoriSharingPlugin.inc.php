@@ -10,7 +10,13 @@
  *
  */
 
+import('classes.workflow.EditorDecisionActionsManager');
 import('lib.pkp.classes.plugins.GenericPlugin');
+import('plugins.generic.boriSharing.classes.SubmissionToShareFactory');
+import('plugins.generic.boriSharing.classes.SubmissionSharer');
+
+define('AGENCY_EMAIL', "agenciateste@lepidus.com.br");
+
 class BoriSharingPlugin extends GenericPlugin {
 
 	public function register($category, $path, $mainContextId = NULL) {
@@ -18,7 +24,7 @@ class BoriSharingPlugin extends GenericPlugin {
 		
 		if (!Config::getVar('general', 'installed') || defined('RUNNING_UPGRADE')) return true;
 		if ($success && $this->getEnabled($mainContextId)) {
-			error_log("Bori");
+			HookRegistry::register('EditorAction::recordDecision', [$this, 'shareWhenArticleApproved']);
 		}
 		return $success;
 	}
@@ -29,6 +35,26 @@ class BoriSharingPlugin extends GenericPlugin {
 
 	public function getDescription() {
 		return __('plugins.generic.boriSharing.description');
+	}
+
+	public function shareWhenArticleApproved($hookName, $params) {
+		$editorDecision = $params[1];
+		if($editorDecision['decision'] == SUBMISSION_EDITOR_DECISION_ACCEPT) {
+			$submission = $params[0];
+			$submissionToShareFactory = new SubmissionToShareFactory();
+
+			$journal = DAORegistry::getDAO('JournalDAO')->getById($submission->getData('contextId'));
+			$editor = DAORegistry::getDAO('UserDAO')->getById($editorDecision['editorId']);
+			$dateAccepted = $editorDecision['dateDecided'];
+			$locale = AppLocale::getLocale();
+			$submissionToShare = $submissionToShareFactory->createSubmissionToShare($journal, $submission, $editor, $dateAccepted, $locale);
+			
+			$sender = $journal->getData('contactEmail');
+			$submissionSharer = new SubmissionSharer($submissionToShare, $sender, AGENCY_EMAIL);
+			//$submissionSharer->share();
+		}
+		
+		return false;
 	}
 
 }
