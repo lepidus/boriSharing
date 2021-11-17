@@ -16,7 +16,6 @@ class SubmissionSharerTest extends TestCase {
     private $journalInitials = "RBFG";
     private $dateAcceptedOriginal = "2021-11-11";
     private $dateAcceptedLocalized = "11/11/2021";
-    private $researchInstitution = "Lepidus";
     private $editor;
     private $authors;
 
@@ -27,7 +26,7 @@ class SubmissionSharerTest extends TestCase {
 
     private function createSubmissionToShare() {
         $this->editor = new Person("João Gandalf", "joaogandalf@lepidus.com.br");
-        $this->authors = [new Person("Juliana Bolseiro", "jubolseiro@lepidus.com.br"), new Person("Saruman Medeiros", "saruman@lepidus.com.br")];
+        $this->authors = [new Person("Juliana Bolseiro", "jubolseiro@lepidus.com.br", "Lepidus"), new Person("Saruman Medeiros", "saruman@lepidus.com.br", "Lepidus")];
         $this->submissionToShare = new SubmissionToShare();
         
         $this->submissionToShare->setId($this->submissionId);
@@ -35,7 +34,6 @@ class SubmissionSharerTest extends TestCase {
         $this->submissionToShare->setAbstract($this->submissionAbstract);
         $this->submissionToShare->setJournalInitials($this->journalInitials);
         $this->submissionToShare->setDateAccepted($this->dateAcceptedOriginal);
-        $this->submissionToShare->setResearchInstitution($this->researchInstitution);
         $this->submissionToShare->setEditor($this->editor);
         $this->submissionToShare->setAuthors($this->authors);
     }
@@ -63,8 +61,7 @@ class SubmissionSharerTest extends TestCase {
         $expectedBody .= "Identificador do artigo: 3532\n";
         $expectedBody .= "Título do artigo: O caso dos cones mágicos\n";
         $expectedBody .= "Resumo/abstract  Uma história das formas geométricas cônicas e suas aplicações na terra média.\n";
-        $expectedBody .= "Nome dos autores: Juliana Bolseiro (jubolseiro@lepidus.com.br), Saruman Medeiros (saruman@lepidus.com.br)\n";
-        $expectedBody .= "Instituição de pesquisa: Lepidus\n";
+        $expectedBody .= "Autores: Juliana Bolseiro (jubolseiro@lepidus.com.br) - Lepidus, Saruman Medeiros (saruman@lepidus.com.br) - Lepidus\n";
         $expectedBody .= "Data de aprovação: 11/11/2021\n";
         $expectedBody .= "Editor da revista (ou responsável por aprovar o artigo): João Gandalf (joaogandalf@lepidus.com.br)\n";
 

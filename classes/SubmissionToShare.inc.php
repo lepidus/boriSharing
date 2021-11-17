@@ -9,7 +9,6 @@ class SubmissionToShare {
     private $abstract;
     private $journalInitials;
     private $dateAccepted;
-    private $researchInstitution;
     private $editor;
     private $authors;
     private $galley;
@@ -52,14 +51,6 @@ class SubmissionToShare {
 
     public function setDateAccepted(string $dateAccepted) {
         $this->dateAccepted = new DateTime($dateAccepted);
-    }
-
-    public function getResearchInstitution(): string {
-        return $this->researchInstitution;
-    }
-
-    public function setResearchInstitution(string $researchInstitution) {
-        $this->researchInstitution = $researchInstitution;
     }
     
     public function getEditor(): Person {

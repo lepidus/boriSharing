@@ -21,8 +21,9 @@ class SubmissionToShareFactory {
         foreach($publication->getData('authors') as $author) {
             $authorName = $author->getFullName($locale);
             $authorEmail = $author->getData('email');
+            $authorAffiliation = $author->getData('affiliation', $locale);
 
-            $submissionAuthors[] = new Person($authorName, $authorEmail);
+            $submissionAuthors[] = new Person($authorName, $authorEmail, $authorAffiliation);
         }
         $submissionToShare->setAuthors($submissionAuthors);
 

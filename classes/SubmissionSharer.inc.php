@@ -34,8 +34,7 @@ class SubmissionSharer {
         $emailBody .= "Identificador do artigo: {$this->submissionToShare->getId()}\n";
         $emailBody .= "Título do artigo: {$this->submissionToShare->getTitle()}\n";
         $emailBody .= "Resumo/abstract  {$this->submissionToShare->getAbstract()}\n";
-        $emailBody .= "Nome dos autores: {$this->submissionToShare->getAuthorsAsRecord()}\n";
-        $emailBody .= "Instituição de pesquisa: {$this->submissionToShare->getResearchInstitution()}\n";
+        $emailBody .= "Autores: {$this->submissionToShare->getAuthorsAsRecord()}\n";
         $emailBody .= "Data de aprovação: {$this->submissionToShare->getDateAccepted()}\n";
         $emailBody .= "Editor da revista (ou responsável por aprovar o artigo): {$this->submissionToShare->getEditor()->asRecord()}\n";
         

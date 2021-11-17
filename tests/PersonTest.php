@@ -7,9 +7,10 @@ class PersonTest extends TestCase {
     private $person;
     private $name = "Jimi Hendrix";
     private $email = "jimi.hendrix@woodstock.com";
+    private $affiliation = "MCA Records";
 
     public function setUp(): void {
-        $this->person = new Person($this->name, $this->email);
+        $this->person = new Person($this->name, $this->email, $this->affiliation);
     }
 
     public function testPersonHasName(): void {
@@ -20,8 +21,12 @@ class PersonTest extends TestCase {
         $this->assertEquals($this->email,$this->person->getEmail());
     }
 
+    public function testPersonHasAffiliation(): void {
+        $this->assertEquals($this->affiliation,$this->person->getAffiliation());
+    }
+
     public function testPersonAsRecord(): void {
-        $expectedRecord = "Jimi Hendrix (jimi.hendrix@woodstock.com)";
+        $expectedRecord = "Jimi Hendrix (jimi.hendrix@woodstock.com) - MCA Records";
         $this->assertEquals($expectedRecord,$this->person->asRecord());
     }
 }

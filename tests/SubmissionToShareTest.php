@@ -15,14 +15,13 @@ class SubmissionToShareTest extends TestCase {
     private $journalInitials = "RBFG";
     private $dateAcceptedOriginal = "2021-11-11";
     private $dateAcceptedLocalized = "11/11/2021";
-    private $researchInstitution = "Lepidus";
     private $editor;
     private $authors;
     private $galley;
 
     public function setUp(): void {
-        $this->editor = new Person("João Gandalf", "joaogandalf@lepidus.com.br");
-        $this->authors = [new Person("Juliana Bolseiro", "jubolseiro@lepidus.com.br"), new Person("Saruman Medeiros", "saruman@lepidus.com.br")];
+        $this->editor = new Person("João Gandalf", "joaogandalf@lepidus.com.br", "Lepidus Tecnologia");
+        $this->authors = [new Person("Juliana Bolseiro", "jubolseiro@lepidus.com.br", "Lepidus Tecnologia"), new Person("Saruman Medeiros", "saruman@lepidus.com.br", "Lepidus Tecnologia")];
         $this->galley = new SubmissionGalley("/public/journals/00/article.pdf", "Final Article");
         $this->submissionToShare = new SubmissionToShare();
         
@@ -31,7 +30,6 @@ class SubmissionToShareTest extends TestCase {
         $this->submissionToShare->setAbstract($this->submissionAbstract);
         $this->submissionToShare->setJournalInitials($this->journalInitials);
         $this->submissionToShare->setDateAccepted($this->dateAcceptedOriginal);
-        $this->submissionToShare->setResearchInstitution($this->researchInstitution);
         $this->submissionToShare->setEditor($this->editor);
         $this->submissionToShare->setAuthors($this->authors);
         $this->submissionToShare->setGalley($this->galley);
@@ -55,10 +53,6 @@ class SubmissionToShareTest extends TestCase {
 
     public function testSubmissionHasDateAccepted(): void {
         $this->assertEquals($this->dateAcceptedLocalized, $this->submissionToShare->getDateAccepted());
-    }
-
-    public function testSubmissionHasResearchInstitution(): void {
-        $this->assertEquals($this->researchInstitution, $this->submissionToShare->getResearchInstitution());
     }
 
     public function testSubmissionHasEditor(): void {

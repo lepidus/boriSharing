@@ -25,6 +25,7 @@ class SubmissionToShareFactoryTest extends PKPTestCase {
     private $authorGivenName = "João";
     private $authorFamilyName = "Gandalf";
     private $authorEmail = "joaogandalf@lepidus.com.br";
+    private $authorAffiliation = "Lepidus Tecnologia";
     private $journalInitials = "RBFG";
     private $dateAcceptedOriginal = "2021-11-11";
     private $dateAcceptedLocalized = "11/11/2021";
@@ -44,6 +45,7 @@ class SubmissionToShareFactoryTest extends PKPTestCase {
         $author->setData('givenName', [$this->locale => $this->authorGivenName]);
         $author->setData('familyName', [$this->locale => $this->authorFamilyName]);
         $author->setData('email', $this->authorEmail);
+        $author->setData('affiliation', [$this->locale => $this->authorAffiliation]);
 
         $submissionFile = new SubmissionFile();
         $submissionFile->setData('path', $this->galleyPath);
@@ -79,7 +81,7 @@ class SubmissionToShareFactoryTest extends PKPTestCase {
         $this->assertEquals($this->abstract, $this->submissionToShare->getAbstract());
         $this->assertEquals($this->journalInitials, $this->submissionToShare->getJournalInitials());
         
-        $expectedRecord = "{$this->authorGivenName} {$this->authorFamilyName} ({$this->authorEmail})";
+        $expectedRecord = "{$this->authorGivenName} {$this->authorFamilyName} ({$this->authorEmail}) - {$this->authorAffiliation}";
         $author = $this->submissionToShare->getAuthors()[0];
         $this->assertEquals($expectedRecord, $author->asRecord());
 
