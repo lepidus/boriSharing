@@ -8,20 +8,20 @@ import('lib.pkp.classes.user.User');
 
 class SubmissionToShareFactory {
 
-    public function createSubmissionToShare(Journal $journal, Submission $submission, User $editor, string $dateAccepted, string $locale): SubmissionToShare {
+    public function createSubmissionToShare(Journal $journal, Submission $submission, User $editor, string $dateAccepted): SubmissionToShare {
         $submissionToShare = new SubmissionToShare();
         $publication = $submission->getCurrentPublication();
 
         $submissionToShare->setId($submission->getData('id'));
-        $submissionToShare->setTitle($publication->getData('title', $locale));
-        $submissionToShare->setAbstract($publication->getData('abstract', $locale));
-        $submissionToShare->setJournalInitials($journal->getData('acronym', $locale));
+        $submissionToShare->setTitle($publication->getLocalizedData('title'));
+        $submissionToShare->setAbstract($publication->getLocalizedData('abstract'));
+        $submissionToShare->setJournalInitials($journal->getLocalizedData('acronym'));
 
         $submissionAuthors = [];
         foreach($publication->getData('authors') as $author) {
-            $authorName = $author->getFullName($locale);
+            $authorName = $author->getFullName();
             $authorEmail = $author->getData('email');
-            $authorAffiliation = $author->getData('affiliation', $locale);
+            $authorAffiliation = (!is_null($author->getLocalizedData('affiliation'))) ? ($author->getLocalizedData('affiliation')) : ("");
 
             $submissionAuthors[] = new Person($authorName, $authorEmail, $authorAffiliation);
         }
@@ -29,10 +29,10 @@ class SubmissionToShareFactory {
 
         $submissionFile = $publication->getData('galleys')[0]->_submissionFile;
         $galleyPath = $submissionFile->getData('path');
-        $galleyName = $submissionFile->getData('name', $locale);
+        $galleyName = $submissionFile->getLocalizedData('name');
         $submissionToShare->setGalley(new SubmissionGalley($galleyPath, $galleyName));
 
-        $editorName = $editor->getFullName($locale);
+        $editorName = $editor->getFullName();
         $editorEmail = $editor->getData('email');
         $submissionToShare->setEditor(new Person($editorName, $editorEmail));
         

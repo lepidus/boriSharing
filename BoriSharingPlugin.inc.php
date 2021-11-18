@@ -46,8 +46,7 @@ class BoriSharingPlugin extends GenericPlugin {
 			$journal = DAORegistry::getDAO('JournalDAO')->getById($submission->getData('contextId'));
 			$editor = DAORegistry::getDAO('UserDAO')->getById($editorDecision['editorId']);
 			$dateAccepted = $editorDecision['dateDecided'];
-			$locale = AppLocale::getLocale();
-			$submissionToShare = $submissionToShareFactory->createSubmissionToShare($journal, $submission, $editor, $dateAccepted, $locale);
+			$submissionToShare = $submissionToShareFactory->createSubmissionToShare($journal, $submission, $editor, $dateAccepted);
 			
 			$sender = $journal->getData('contactEmail');
 			$submissionSharer = new SubmissionSharer($submissionToShare, $sender, AGENCY_EMAIL);

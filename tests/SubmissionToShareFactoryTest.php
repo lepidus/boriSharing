@@ -56,6 +56,7 @@ class SubmissionToShareFactoryTest extends PKPTestCase {
 
         $this->publication = new Publication();
         $this->publication->setData('id', $this->publicationId);
+        $this->publication->setData('locale', $this->locale);
         $this->publication->setData('title', [$this->locale => $this->title]);
         $this->publication->setData('abstract', [$this->locale => $this->abstract]);
         $this->publication->setData('authors', [$author]);
@@ -72,7 +73,7 @@ class SubmissionToShareFactoryTest extends PKPTestCase {
         $editor->setData('email', $this->editorEmail);
         
         $submissionToShareFactory = new SubmissionToShareFactory();
-        $this->submissionToShare = $submissionToShareFactory->createSubmissionToShare($this->journal, $this->submission, $editor, $this->dateAcceptedOriginal, $this->locale);
+        $this->submissionToShare = $submissionToShareFactory->createSubmissionToShare($this->journal, $this->submission, $editor, $this->dateAcceptedOriginal);
     }
 
     public function testSubmissionCreationByFactory(): void {
