@@ -31,13 +31,13 @@ class SubmissionSharer {
     }
 
     public function getEmailBody(): string {
-        $emailBody = "Sigla do periódico: {$this->submissionToShare->getJournalInitials()}\n";
-        $emailBody .= "Identificador do artigo: {$this->submissionToShare->getId()}\n";
-        $emailBody .= "Título do artigo: {$this->submissionToShare->getTitle()}\n";
-        $emailBody .= "Resumo/abstract  {$this->submissionToShare->getAbstract()}\n";
-        $emailBody .= "Autores: {$this->submissionToShare->getAuthorsAsRecord()}\n";
-        $emailBody .= "Data de aprovação: {$this->submissionToShare->getDateAccepted()}\n";
-        $emailBody .= "Editor da revista (ou responsável por aprovar o artigo): {$this->submissionToShare->getEditor()->asRecord()}\n";
+        $emailBody = "<strong>Sigla do periódico:</strong> {$this->submissionToShare->getJournalInitials()}<br>";
+        $emailBody .= "<strong>Identificador do artigo:</strong> {$this->submissionToShare->getId()}<br>";
+        $emailBody .= "<strong>Título do artigo:</strong> {$this->submissionToShare->getTitle()}<br><br>";
+        $emailBody .= "<strong>Resumo/abstract:</strong>  {$this->submissionToShare->getAbstract()}";
+        $emailBody .= "<strong>Autores:</strong> {$this->submissionToShare->getAuthorsAsRecord()}<br>";
+        $emailBody .= "<strong>Data de aprovação:</strong> {$this->submissionToShare->getDateAccepted()}<br>";
+        $emailBody .= "<strong>Editor da revista (ou responsável por aprovar o artigo):</strong> {$this->submissionToShare->getEditor()->asRecord()}<br>";
         
         return $emailBody;
     }

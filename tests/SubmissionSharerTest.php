@@ -57,13 +57,13 @@ class SubmissionSharerTest extends TestCase {
     }
 
     public function testSharerWritesEmailBody(): void {
-        $expectedBody = "Sigla do periódico: RBFG\n";
-        $expectedBody .= "Identificador do artigo: 3532\n";
-        $expectedBody .= "Título do artigo: O caso dos cones mágicos\n";
-        $expectedBody .= "Resumo/abstract  Uma história das formas geométricas cônicas e suas aplicações na terra média.\n";
-        $expectedBody .= "Autores: Juliana Bolseiro (jubolseiro@lepidus.com.br) - Lepidus, Saruman Medeiros (saruman@lepidus.com.br) - Lepidus\n";
-        $expectedBody .= "Data de aprovação: 11/11/2021\n";
-        $expectedBody .= "Editor da revista (ou responsável por aprovar o artigo): João Gandalf (joaogandalf@lepidus.com.br)\n";
+        $expectedBody = "<strong>Sigla do periódico:</strong> RBFG<br>";
+        $expectedBody .= "<strong>Identificador do artigo:</strong> 3532<br>";
+        $expectedBody .= "<strong>Título do artigo:</strong> O caso dos cones mágicos<br><br>";
+        $expectedBody .= "<strong>Resumo/abstract:</strong>  Uma história das formas geométricas cônicas e suas aplicações na terra média.";
+        $expectedBody .= "<strong>Autores:</strong> Juliana Bolseiro (jubolseiro@lepidus.com.br) - Lepidus, Saruman Medeiros (saruman@lepidus.com.br) - Lepidus<br>";
+        $expectedBody .= "<strong>Data de aprovação:</strong> 11/11/2021<br>";
+        $expectedBody .= "<strong>Editor da revista (ou responsável por aprovar o artigo):</strong> João Gandalf (joaogandalf@lepidus.com.br)<br>";
 
         $this->assertEquals($expectedBody, $this->submissionSharer->getEmailBody());
     }
