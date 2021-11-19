@@ -1,6 +1,6 @@
 <?php
 
-class SubmissionGalley {
+class SubmissionDocument {
 
     private $path;
     private $name;

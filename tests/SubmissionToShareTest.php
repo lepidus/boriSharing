@@ -2,7 +2,7 @@
 use PHPUnit\Framework\TestCase;
 import ('plugins.generic.boriSharing.classes.SubmissionToShare');
 import ('plugins.generic.boriSharing.classes.Person');
-import ('plugins.generic.boriSharing.classes.SubmissionGalley');
+import ('plugins.generic.boriSharing.classes.SubmissionDocument');
 
 error_log("------- TESTES DO BORI SHARING ---------");
 
@@ -17,12 +17,12 @@ class SubmissionToShareTest extends TestCase {
     private $dateAcceptedLocalized = "11/11/2021";
     private $editor;
     private $authors;
-    private $galley;
+    private $documents;
 
     public function setUp(): void {
         $this->editor = new Person("João Gandalf", "joaogandalf@lepidus.com.br", "Lepidus Tecnologia");
         $this->authors = [new Person("Juliana Bolseiro", "jubolseiro@lepidus.com.br", "Lepidus Tecnologia"), new Person("Saruman Medeiros", "saruman@lepidus.com.br", "Lepidus Tecnologia")];
-        $this->galley = new SubmissionGalley("/public/journals/00/article.pdf", "Final Article");
+        $this->documents = [new SubmissionDocument("/public/journals/00/article.pdf", "Final Article")];
         $this->submissionToShare = new SubmissionToShare();
         
         $this->submissionToShare->setId($this->submissionId);
@@ -32,7 +32,7 @@ class SubmissionToShareTest extends TestCase {
         $this->submissionToShare->setDateAccepted($this->dateAcceptedOriginal);
         $this->submissionToShare->setEditor($this->editor);
         $this->submissionToShare->setAuthors($this->authors);
-        $this->submissionToShare->setGalley($this->galley);
+        $this->submissionToShare->setDocuments($this->documents);
     }
 
     public function testSubmissionHasId(): void {
@@ -63,8 +63,8 @@ class SubmissionToShareTest extends TestCase {
         $this->assertEquals($this->authors, $this->submissionToShare->getAuthors());
     }
 
-    public function testSubmissionHasGalley(): void {
-        $this->assertEquals($this->galley, $this->submissionToShare->getGalley());
+    public function testSubmissionHasDocuments(): void {
+        $this->assertEquals($this->documents, $this->submissionToShare->getDocuments());
     }
 
     public function testSubmissionAuthorsAsRecord(): void {

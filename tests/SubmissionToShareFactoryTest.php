@@ -7,7 +7,6 @@ import('classes.publication.Publication');
 import('lib.pkp.classes.user.User');
 import('classes.article.Author');
 import('lib.pkp.classes.submission.SubmissionFile');
-import('classes.article.ArticleGalley');
 import('plugins.generic.boriSharing.classes.SubmissionToShareFactory');
 
 class SubmissionToShareFactoryTest extends PKPTestCase {
@@ -29,8 +28,8 @@ class SubmissionToShareFactoryTest extends PKPTestCase {
     private $journalInitials = "RBFG";
     private $dateAcceptedOriginal = "2021-11-11";
     private $dateAcceptedLocalized = "11/11/2021";
-    private $galleyPath = "journals/00/articles/0000/submission/proof/final.pdf";
-    private $galleyName = "Artigo final.pdf";
+    private $documentPath = "journals/00/articles/0000/submission/proof/final.pdf";
+    private $documentName = "Artigo final.pdf";
     private $editorGivenName = "Juliana";
     private $editorFamilyName = "Bolseiro";
     private $editorEmail = "jubolseiro@lepidus.com.br";
@@ -48,11 +47,8 @@ class SubmissionToShareFactoryTest extends PKPTestCase {
         $author->setData('affiliation', [$this->locale => $this->authorAffiliation]);
 
         $submissionFile = new SubmissionFile();
-        $submissionFile->setData('path', $this->galleyPath);
-        $submissionFile->setData('name', [$this->locale => $this->galleyName]);
-        
-        $articleGalley = new ArticleGalley();
-        $articleGalley->_submissionFile = $submissionFile;
+        $submissionFile->setData('path', $this->documentPath);
+        $submissionFile->setData('name', [$this->locale => $this->documentName]);
 
         $this->publication = new Publication();
         $this->publication->setData('id', $this->publicationId);
@@ -60,7 +56,6 @@ class SubmissionToShareFactoryTest extends PKPTestCase {
         $this->publication->setData('title', [$this->locale => $this->title]);
         $this->publication->setData('abstract', [$this->locale => $this->abstract]);
         $this->publication->setData('authors', [$author]);
-        $this->publication->setData('galleys', [$articleGalley]);
         
         $this->submission = new Submission();
         $this->submission->setData('id', $this->submissionId);
@@ -73,7 +68,7 @@ class SubmissionToShareFactoryTest extends PKPTestCase {
         $editor->setData('email', $this->editorEmail);
         
         $submissionToShareFactory = new SubmissionToShareFactory();
-        $this->submissionToShare = $submissionToShareFactory->createSubmissionToShare($this->journal, $this->submission, $editor, $this->dateAcceptedOriginal);
+        $this->submissionToShare = $submissionToShareFactory->createSubmissionToShare($this->journal, $this->submission, $editor, $this->dateAcceptedOriginal, [$submissionFile]);
     }
 
     public function testSubmissionCreationByFactory(): void {
@@ -86,8 +81,9 @@ class SubmissionToShareFactoryTest extends PKPTestCase {
         $author = $this->submissionToShare->getAuthors()[0];
         $this->assertEquals($expectedRecord, $author->asRecord());
 
-        $this->assertEquals($this->galleyPath, $this->submissionToShare->getGalley()->getPath());
-        $this->assertEquals($this->galleyName, $this->submissionToShare->getGalley()->getName());
+        $submissionDocument = $this->submissionToShare->getDocuments()[0];
+        $this->assertEquals($this->documentPath, $submissionDocument->getPath());
+        $this->assertEquals($this->documentName, $submissionDocument->getName());
 
         $expectedEditorRecord = "{$this->editorGivenName} {$this->editorFamilyName} ({$this->editorEmail})";
         $editor = $this->submissionToShare->getEditor();

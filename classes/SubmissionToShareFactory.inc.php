@@ -1,14 +1,14 @@
 <?php
 import('plugins.generic.boriSharing.classes.SubmissionToShare');
 import('plugins.generic.boriSharing.classes.Person');
-import('plugins.generic.boriSharing.classes.SubmissionGalley');
+import('plugins.generic.boriSharing.classes.SubmissionDocument');
 import('classes.submission.Submission');
 import('classes.journal.Journal');
 import('lib.pkp.classes.user.User');
 
 class SubmissionToShareFactory {
 
-    public function createSubmissionToShare(Journal $journal, Submission $submission, User $editor, string $dateAccepted): SubmissionToShare {
+    public function createSubmissionToShare(Journal $journal, Submission $submission, User $editor, string $dateAccepted, array $submissionFiles): SubmissionToShare {
         $submissionToShare = new SubmissionToShare();
         $publication = $submission->getCurrentPublication();
 
@@ -27,10 +27,13 @@ class SubmissionToShareFactory {
         }
         $submissionToShare->setAuthors($submissionAuthors);
 
-        $submissionFile = $publication->getData('galleys')[0]->_submissionFile;
-        $galleyPath = $submissionFile->getData('path');
-        $galleyName = $submissionFile->getLocalizedData('name');
-        $submissionToShare->setGalley(new SubmissionGalley($galleyPath, $galleyName));
+        $submissionDocuments = [];
+        foreach($submissionFiles as $submissionFile) {
+            $documentPath = $submissionFile->getData('path');
+            $documentName = $submissionFile->getLocalizedData('name');
+            $submissionDocuments[] = new SubmissionDocument($documentPath, $documentName);
+        }
+        $submissionToShare->setDocuments($submissionDocuments);
 
         $editorName = $editor->getFullName();
         $editorEmail = $editor->getData('email');
