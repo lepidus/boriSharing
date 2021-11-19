@@ -15,6 +15,9 @@ class SubmissionToShareFactoryTest extends PKPTestCase {
     private $journal;
     private $submission;
     private $publication;
+    private $author;
+    private $submissionFile;
+    private $editor;
     private $locale = 'pt_BR';
 
     private $publicationId = 1;
@@ -37,38 +40,57 @@ class SubmissionToShareFactoryTest extends PKPTestCase {
     public function setUp(): void {
         parent::setUp();
         
+        $this->createJournal();
+        $this->createAuthor();
+        $this->createSubmissionFile();
+        $this->createPublication();        
+        $this->createSubmission();
+        $this->createEditor();
+        
+        $submissionToShareFactory = new SubmissionToShareFactory();
+        $this->submissionToShare = $submissionToShareFactory->createSubmissionToShare($this->journal, $this->submission, $this->editor, $this->dateAcceptedOriginal, [$this->submissionFile]);
+    }
+
+    public function createJournal(): void {
         $this->journal = new Journal();
         $this->journal->setData('acronym', [$this->locale => $this->journalInitials]);
+    }
 
-        $author = new Author();
-        $author->setData('givenName', [$this->locale => $this->authorGivenName]);
-        $author->setData('familyName', [$this->locale => $this->authorFamilyName]);
-        $author->setData('email', $this->authorEmail);
-        $author->setData('affiliation', [$this->locale => $this->authorAffiliation]);
+    public function createAuthor(): void {
+        $this->author = new Author();
+        $this->author->setData('givenName', [$this->locale => $this->authorGivenName]);
+        $this->author->setData('familyName', [$this->locale => $this->authorFamilyName]);
+        $this->author->setData('email', $this->authorEmail);
+        $this->author->setData('affiliation', [$this->locale => $this->authorAffiliation]);
+    }
 
-        $submissionFile = new SubmissionFile();
-        $submissionFile->setData('path', $this->documentPath);
-        $submissionFile->setData('name', [$this->locale => $this->documentName]);
+    public function createSubmissionFile(): void {
+        $this->submissionFile = new SubmissionFile();
+        $this->submissionFile->setData('path', $this->documentPath);
+        $this->submissionFile->setData('name', [$this->locale => $this->documentName]);
+    }
 
+    public function createPublication(): void {
         $this->publication = new Publication();
         $this->publication->setData('id', $this->publicationId);
         $this->publication->setData('locale', $this->locale);
         $this->publication->setData('title', [$this->locale => $this->title]);
         $this->publication->setData('abstract', [$this->locale => $this->abstract]);
-        $this->publication->setData('authors', [$author]);
-        
+        $this->publication->setData('authors', [$this->author]);
+    }
+
+    public function createSubmission(): void {
         $this->submission = new Submission();
         $this->submission->setData('id', $this->submissionId);
         $this->submission->setData('publications', [$this->publication]);
         $this->submission->setData('currentPublicationId', $this->publicationId);
+    }
 
-        $editor = new User();
-        $editor->setData('givenName', [$this->locale => $this->editorGivenName]);
-        $editor->setData('familyName', [$this->locale => $this->editorFamilyName]);
-        $editor->setData('email', $this->editorEmail);
-        
-        $submissionToShareFactory = new SubmissionToShareFactory();
-        $this->submissionToShare = $submissionToShareFactory->createSubmissionToShare($this->journal, $this->submission, $editor, $this->dateAcceptedOriginal, [$submissionFile]);
+    public function createEditor(): void {
+        $this->editor = new User();
+        $this->editor->setData('givenName', [$this->locale => $this->editorGivenName]);
+        $this->editor->setData('familyName', [$this->locale => $this->editorFamilyName]);
+        $this->editor->setData('email', $this->editorEmail);
     }
 
     public function testSubmissionCreationByFactory(): void {
