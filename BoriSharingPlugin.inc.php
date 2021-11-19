@@ -11,6 +11,7 @@
  */
 
 import('classes.workflow.EditorDecisionActionsManager');
+import('lib.pkp.classes.submission.SubmissionFile');
 import('lib.pkp.classes.plugins.GenericPlugin');
 import('plugins.generic.boriSharing.classes.SubmissionToShareFactory');
 import('plugins.generic.boriSharing.classes.SubmissionSharer');
@@ -46,14 +47,25 @@ class BoriSharingPlugin extends GenericPlugin {
 			$journal = DAORegistry::getDAO('JournalDAO')->getById($submission->getData('contextId'));
 			$editor = DAORegistry::getDAO('UserDAO')->getById($editorDecision['editorId']);
 			$dateAccepted = $editorDecision['dateDecided'];
-			$submissionToShare = $submissionToShareFactory->createSubmissionToShare($journal, $submission, $editor, $dateAccepted);
+			$submissionFiles = $this->getSubmissionFiles($submission);
+			$submissionToShare = $submissionToShareFactory->createSubmissionToShare($journal, $submission, $editor, $dateAccepted, $submissionFiles);
 			
 			$sender = $journal->getData('contactEmail');
 			$submissionSharer = new SubmissionSharer($submissionToShare, $sender, AGENCY_EMAIL);
-			//$submissionSharer->share();
+			$submissionSharer->share();
 		}
 		
 		return false;
+	}
+
+	private function getSubmissionFiles($submission) {
+		$submissionFileService = Services::get('submissionFile');
+		$submissionFiles = $submissionFileService->getMany([
+			'submissionIds' => [$submission->getId()],
+			'fileStages' => [SUBMISSION_FILE_REVIEW_REVISION]
+		]);
+		
+		return iterator_to_array($submissionFiles);
 	}
 
 }

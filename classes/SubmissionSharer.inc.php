@@ -1,5 +1,6 @@
 <?php
 import ('plugins.generic.boriSharing.classes.SubmissionToShare');
+import('lib.pkp.classes.mail.Mail');
 
 class SubmissionSharer {
 
@@ -39,5 +40,28 @@ class SubmissionSharer {
         $emailBody .= "Editor da revista (ou responsável por aprovar o artigo): {$this->submissionToShare->getEditor()->asRecord()}\n";
         
         return $emailBody;
+    }
+
+    public function share() {
+        $mail = new Mail();
+
+        $fromEmail = $this->sender;
+        $fromName = $this->submissionToShare->getJournalInitials();
+        $mail->setFrom($fromEmail, $fromName);
+        
+        $mail->setRecipients([
+            [
+                'name' => "",
+                'email' => $this->recipient,
+            ],
+        ]);
+        $mail->setSubject($this->getEmailSubject());
+        $mail->setBody($this->getEmailBody());
+
+        foreach($this->submissionToShare->getDocuments() as $document) {
+            $mail->addAttachment($document->getPath(), $document->getName());
+        }
+
+        $mail->send();
     }
 }

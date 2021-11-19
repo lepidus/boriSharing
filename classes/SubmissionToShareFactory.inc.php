@@ -29,7 +29,7 @@ class SubmissionToShareFactory {
 
         $submissionDocuments = [];
         foreach($submissionFiles as $submissionFile) {
-            $documentPath = $submissionFile->getData('path');
+            $documentPath = rtrim(Config::getVar('files', 'files_dir'), '/') . '/' . $submissionFile->getData('path');
             $documentName = $submissionFile->getLocalizedData('name');
             $submissionDocuments[] = new SubmissionDocument($documentPath, $documentName);
         }

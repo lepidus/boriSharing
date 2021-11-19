@@ -82,7 +82,8 @@ class SubmissionToShareFactoryTest extends PKPTestCase {
         $this->assertEquals($expectedRecord, $author->asRecord());
 
         $submissionDocument = $this->submissionToShare->getDocuments()[0];
-        $this->assertEquals($this->documentPath, $submissionDocument->getPath());
+        $expectDocumentPath = rtrim(Config::getVar('files', 'files_dir'), '/') . '/' . $this->documentPath;
+        $this->assertEquals($expectDocumentPath, $submissionDocument->getPath());
         $this->assertEquals($this->documentName, $submissionDocument->getName());
 
         $expectedEditorRecord = "{$this->editorGivenName} {$this->editorFamilyName} ({$this->editorEmail})";
