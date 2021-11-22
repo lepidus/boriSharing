@@ -52,6 +52,7 @@ class SubmissionToShareFactoryTest extends PKPTestCase {
         $this->createEditor();
         
         $this->submissionToShareFactory = new SubmissionToShareFactory();
+        $this->submissionToShare = $this->submissionToShareFactory->createAcceptedSubmission($this->journal, $this->submission, $this->editor, $this->dateAcceptedOriginal, [$this->submissionFile]);
     }
 
     private function createJournal(): void {
@@ -96,30 +97,37 @@ class SubmissionToShareFactoryTest extends PKPTestCase {
         $this->editor->setData('email', $this->editorEmail);
     }
 
-    public function testAcceptedSubmissionCreationByFactory(): void {
-        $this->submissionToShare = $this->submissionToShareFactory->createAcceptedSubmission($this->journal, $this->submission, $this->editor, $this->dateAcceptedOriginal, [$this->submissionFile]);
-
+    public function testCreatedSubmissionHasMetadata(): void {
         $this->assertEquals($this->submissionId, $this->submissionToShare->getId());
         $this->assertEquals($this->title, $this->submissionToShare->getTitle());
         $this->assertEquals($this->abstract, $this->submissionToShare->getAbstract());
         $this->assertEquals($this->journalInitials, $this->submissionToShare->getJournalInitials());
-        
+    }
+
+    public function testCreatedSubmissionHasAuthors(): void {
         $expectedRecord = "{$this->authorGivenName} {$this->authorFamilyName} ({$this->authorEmail}) - {$this->authorAffiliation}";
         $author = $this->submissionToShare->getAuthors()[0];
         $this->assertEquals($expectedRecord, $author->asRecord());
+    }
 
+    public function testCreatedSubmissionHasDocuments(): void {
         $submissionDocument = $this->submissionToShare->getDocuments()[0];
         $expectDocumentPath = rtrim(Config::getVar('files', 'files_dir'), '/') . '/' . $this->documentPath;
         $this->assertEquals($expectDocumentPath, $submissionDocument->getPath());
         $this->assertEquals($this->documentName, $submissionDocument->getName());
+    }
 
+    public function testCreatedSubmissionHasEditor(): void {
         $expectedEditorRecord = "{$this->editorGivenName} {$this->editorFamilyName} ({$this->editorEmail})";
         $editor = $this->submissionToShare->getEditor();
         $this->assertEquals($expectedEditorRecord, $editor->asRecord());
+    }
+    
+    public function testCreatedSubmissionHasDateAccepted(): void {
         $this->assertEquals($this->dateAcceptedLocalized, $this->submissionToShare->getDateAccepted());
     }
-
-    public function testPublishedSubmissionCreationByFactory(): void {
+    
+    public function testCreatedSubmissionHasDatePublished(): void {
         $this->submissionToShare = $this->submissionToShareFactory->createPublishedSubmission($this->journal, $this->submission, $this->editor, $this->datePublishedOriginal);
         
         $this->assertEquals($this->datePublishedLocalized, $this->submissionToShare->getDatePublished());
