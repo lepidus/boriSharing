@@ -15,6 +15,8 @@ class SubmissionToShareTest extends TestCase {
     private $journalInitials = "RBFG";
     private $dateAcceptedOriginal = "2021-11-11";
     private $dateAcceptedLocalized = "11/11/2021";
+    private $datePublishedOriginal = "2021-11-23";
+    private $datePublishedLocalized = "23/11/2021";
     private $editor;
     private $authors;
     private $documents;
@@ -30,6 +32,7 @@ class SubmissionToShareTest extends TestCase {
         $this->submissionToShare->setAbstract($this->submissionAbstract);
         $this->submissionToShare->setJournalInitials($this->journalInitials);
         $this->submissionToShare->setDateAccepted($this->dateAcceptedOriginal);
+        $this->submissionToShare->setDatePublished($this->datePublishedOriginal);
         $this->submissionToShare->setEditor($this->editor);
         $this->submissionToShare->setAuthors($this->authors);
         $this->submissionToShare->setDocuments($this->documents);
@@ -71,5 +74,9 @@ class SubmissionToShareTest extends TestCase {
         $expectedRecord = $this->authors[0]->asRecord() . ", " . $this->authors[1]->asRecord();
 
         $this->assertEquals($expectedRecord, $this->submissionToShare->getAuthorsAsRecord());
+    }
+
+    public function testSubmissionHasDatePublished(): void {
+        $this->assertEquals($this->datePublishedLocalized, $this->submissionToShare->getDatePublished());
     }
 }

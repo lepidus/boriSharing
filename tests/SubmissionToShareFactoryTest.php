@@ -11,6 +11,8 @@ import('plugins.generic.boriSharing.classes.SubmissionToShareFactory');
 
 class SubmissionToShareFactoryTest extends PKPTestCase {
 
+    private $submissionToShareFactory;
+    
     private $submissionToShare;
     private $journal;
     private $submission;
@@ -31,6 +33,8 @@ class SubmissionToShareFactoryTest extends PKPTestCase {
     private $journalInitials = "RBFG";
     private $dateAcceptedOriginal = "2021-11-11";
     private $dateAcceptedLocalized = "11/11/2021";
+    private $datePublishedOriginal = "2021-11-23";
+    private $datePublishedLocalized = "23/11/2021";
     private $documentPath = "journals/00/articles/0000/submission/proof/final.pdf";
     private $documentName = "Artigo final.pdf";
     private $editorGivenName = "Juliana";
@@ -47,16 +51,15 @@ class SubmissionToShareFactoryTest extends PKPTestCase {
         $this->createSubmission();
         $this->createEditor();
         
-        $submissionToShareFactory = new SubmissionToShareFactory();
-        $this->submissionToShare = $submissionToShareFactory->createSubmissionToShare($this->journal, $this->submission, $this->editor, $this->dateAcceptedOriginal, [$this->submissionFile]);
+        $this->submissionToShareFactory = new SubmissionToShareFactory();
     }
 
-    public function createJournal(): void {
+    private function createJournal(): void {
         $this->journal = new Journal();
         $this->journal->setData('acronym', [$this->locale => $this->journalInitials]);
     }
 
-    public function createAuthor(): void {
+    private function createAuthor(): void {
         $this->author = new Author();
         $this->author->setData('givenName', [$this->locale => $this->authorGivenName]);
         $this->author->setData('familyName', [$this->locale => $this->authorFamilyName]);
@@ -64,13 +67,13 @@ class SubmissionToShareFactoryTest extends PKPTestCase {
         $this->author->setData('affiliation', [$this->locale => $this->authorAffiliation]);
     }
 
-    public function createSubmissionFile(): void {
+    private function createSubmissionFile(): void {
         $this->submissionFile = new SubmissionFile();
         $this->submissionFile->setData('path', $this->documentPath);
         $this->submissionFile->setData('name', [$this->locale => $this->documentName]);
     }
 
-    public function createPublication(): void {
+    private function createPublication(): void {
         $this->publication = new Publication();
         $this->publication->setData('id', $this->publicationId);
         $this->publication->setData('locale', $this->locale);
@@ -79,21 +82,23 @@ class SubmissionToShareFactoryTest extends PKPTestCase {
         $this->publication->setData('authors', [$this->author]);
     }
 
-    public function createSubmission(): void {
+    private function createSubmission(): void {
         $this->submission = new Submission();
         $this->submission->setData('id', $this->submissionId);
         $this->submission->setData('publications', [$this->publication]);
         $this->submission->setData('currentPublicationId', $this->publicationId);
     }
 
-    public function createEditor(): void {
+    private function createEditor(): void {
         $this->editor = new User();
         $this->editor->setData('givenName', [$this->locale => $this->editorGivenName]);
         $this->editor->setData('familyName', [$this->locale => $this->editorFamilyName]);
         $this->editor->setData('email', $this->editorEmail);
     }
 
-    public function testSubmissionCreationByFactory(): void {
+    public function testAcceptedSubmissionCreationByFactory(): void {
+        $this->submissionToShare = $this->submissionToShareFactory->createAcceptedSubmission($this->journal, $this->submission, $this->editor, $this->dateAcceptedOriginal, [$this->submissionFile]);
+
         $this->assertEquals($this->submissionId, $this->submissionToShare->getId());
         $this->assertEquals($this->title, $this->submissionToShare->getTitle());
         $this->assertEquals($this->abstract, $this->submissionToShare->getAbstract());
@@ -112,6 +117,12 @@ class SubmissionToShareFactoryTest extends PKPTestCase {
         $editor = $this->submissionToShare->getEditor();
         $this->assertEquals($expectedEditorRecord, $editor->asRecord());
         $this->assertEquals($this->dateAcceptedLocalized, $this->submissionToShare->getDateAccepted());
+    }
+
+    public function testPublishedSubmissionCreationByFactory(): void {
+        $this->submissionToShare = $this->submissionToShareFactory->createPublishedSubmission($this->journal, $this->submission, $this->editor, $this->datePublishedOriginal);
+        
+        $this->assertEquals($this->datePublishedLocalized, $this->submissionToShare->getDatePublished());
     }
 
 }

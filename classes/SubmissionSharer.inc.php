@@ -26,11 +26,15 @@ class SubmissionSharer {
         return $this->recipient;
     }
 
-    public function getEmailSubject(): string {
+    public function getAcceptedEmailSubject(): string {
         return "Artigo {$this->submissionToShare->getId()} aprovado na revista {$this->submissionToShare->getJournalInitials()}";
     }
 
-    public function getEmailBody(): string {
+    public function getPublishedEmailSubject(): string {
+        return "Artigo {$this->submissionToShare->getId()} publicado na revista {$this->submissionToShare->getJournalInitials()}";
+    }
+
+    public function getAcceptedEmailBody(): string {
         $emailBody = "<strong>Sigla do periódico:</strong> {$this->submissionToShare->getJournalInitials()}<br>";
         $emailBody .= "<strong>Identificador do artigo:</strong> {$this->submissionToShare->getId()}<br>";
         $emailBody .= "<strong>Título do artigo:</strong> {$this->submissionToShare->getTitle()}<br><br>";
@@ -39,6 +43,14 @@ class SubmissionSharer {
         $emailBody .= "<strong>Data de aprovação:</strong> {$this->submissionToShare->getDateAccepted()}<br>";
         $emailBody .= "<strong>Editor da revista (ou responsável por aprovar o artigo):</strong> {$this->submissionToShare->getEditor()->asRecord()}<br>";
         
+        return $emailBody;
+    }
+
+    public function getPublishedEmailBody(): string {
+        $emailBody = "<strong>Título do artigo:</strong> {$this->submissionToShare->getTitle()}<br>";
+        $emailBody .= "<strong>Data de publicação:</strong> {$this->submissionToShare->getDatePublished()}<br>";
+        $emailBody .= "<strong>Editor(a) que publicou:</strong> {$this->submissionToShare->getEditor()->asRecord()}<br>";
+
         return $emailBody;
     }
 
