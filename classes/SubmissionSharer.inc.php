@@ -54,7 +54,7 @@ class SubmissionSharer {
         return $emailBody;
     }
 
-    public function share() {
+    private function shareByMail($subject, $body, $sendDocuments) {
         $mail = new Mail();
 
         $fromEmail = $this->sender;
@@ -67,13 +67,23 @@ class SubmissionSharer {
                 'email' => $this->recipient,
             ],
         ]);
-        $mail->setSubject($this->getEmailSubject());
-        $mail->setBody($this->getEmailBody());
+        $mail->setSubject($subject);
+        $mail->setBody($body);
 
-        foreach($this->submissionToShare->getDocuments() as $document) {
-            $mail->addAttachment($document->getPath(), $document->getName());
+        if($sendDocuments) {
+            foreach($this->submissionToShare->getDocuments() as $document) {
+                $mail->addAttachment($document->getPath(), $document->getName());
+            }
         }
 
         $mail->send();
+    }
+
+    public function shareAccepted() {
+        $this->shareByMail($this->getAcceptedEmailSubject(), $this->getAcceptedEmailBody(), true);
+    }
+
+    public function sharePublished() {
+        $this->shareByMail($this->getPublishedEmailSubject(), $this->getPublishedEmailBody(), false);
     }
 }

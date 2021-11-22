@@ -26,6 +26,7 @@ class BoriSharingPlugin extends GenericPlugin {
 		if (!Config::getVar('general', 'installed') || defined('RUNNING_UPGRADE')) return true;
 		if ($success && $this->getEnabled($mainContextId)) {
 			HookRegistry::register('EditorAction::recordDecision', [$this, 'shareWhenArticleApproved']);
+			HookRegistry::register('Publication::publish', array($this, 'shareWhenArticlePublished'));
 		}
 		return $success;
 	}
@@ -48,11 +49,11 @@ class BoriSharingPlugin extends GenericPlugin {
 			$editor = DAORegistry::getDAO('UserDAO')->getById($editorDecision['editorId']);
 			$dateAccepted = $editorDecision['dateDecided'];
 			$submissionFiles = $this->getSubmissionFiles($submission);
-			$submissionToShare = $submissionToShareFactory->createSubmissionToShare($journal, $submission, $editor, $dateAccepted, $submissionFiles);
+			$submissionToShare = $submissionToShareFactory->createAcceptedSubmission($journal, $submission, $editor, $dateAccepted, $submissionFiles);
 			
 			$sender = $journal->getData('contactEmail');
 			$submissionSharer = new SubmissionSharer($submissionToShare, $sender, AGENCY_EMAIL);
-			$submissionSharer->share();
+			$submissionSharer->shareAccepted();
 		}
 		
 		return false;
@@ -66,6 +67,23 @@ class BoriSharingPlugin extends GenericPlugin {
 		]);
 		
 		return iterator_to_array($submissionFiles);
+	}
+
+	public function shareWhenArticlePublished($hookName, $params) {
+		$publication = $params[0];
+		$submission = $params[2];
+		$submissionToShareFactory = new SubmissionToShareFactory();
+
+		$journal = DAORegistry::getDAO('JournalDAO')->getById($submission->getData('contextId'));
+		$datePublished = $publication->getData('datePublished');
+		
+		$request = Application::get()->getRequest();
+		$editor = $request->getUser();
+		$submissionToShare = $submissionToShareFactory->createPublishedSubmission($journal, $submission, $editor, $datePublished);
+
+		$sender = $journal->getData('contactEmail');
+		$submissionSharer = new SubmissionSharer($submissionToShare, $sender, AGENCY_EMAIL);
+		$submissionSharer->sharePublished();
 	}
 
 }
