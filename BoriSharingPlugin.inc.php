@@ -86,4 +86,71 @@ class BoriSharingPlugin extends GenericPlugin {
 		$submissionSharer->sharePublished();
 	}
 
+	public function getActions($request, $actionArgs) {
+		$actions = parent::getActions($request, $actionArgs);
+
+		if (!$this->getEnabled()) {
+			return $actions;
+		}
+
+		$router = $request->getRouter();
+		import('lib.pkp.classes.linkAction.request.AjaxModal');
+		$linkAction = new LinkAction(
+			'settings',
+			new AjaxModal(
+				$router->url(
+					$request,
+					null,
+					null,
+					'manage',
+					null,
+					array(
+						'verb' => 'settings',
+						'plugin' => $this->getName(),
+						'category' => 'generic'
+					)
+				),
+				$this->getDisplayName()
+			),
+			__('manager.plugins.settings'),
+			null
+		);
+
+		array_unshift($actions, $linkAction);
+
+		return $actions;
+	}
+
+	public function manage($args, $request) {
+		$journal = $request->getJournal();
+
+		switch($request->getUserVar('verb')) {
+			case 'settings':
+				$context = $request->getContext();
+				AppLocale::requireComponents(LOCALE_COMPONENT_APP_COMMON,  LOCALE_COMPONENT_PKP_MANAGER);
+				$this->import('form.BoriSettingsForm');
+				$form = new BoriSettingsForm($this, $context->getId());
+
+				if ($request->getUserVar('save')) {
+					$form->readInputData();
+					
+					if ($form->validate()) {
+						$form->execute();
+
+						$notificationContent = __('plugins.generic.boriSharing.termsAcceptedSuccess');
+						$currentUser = $request->getUser();
+						$notificationMgr = new NotificationManager();
+						$notificationMgr->createTrivialNotification($currentUser->getId(), NOTIFICATION_TYPE_SUCCESS, array('contents' => $notificationContent));
+
+						return new JSONMessage(true);
+					}
+				}
+
+				return new JSONMessage(true, $form->fetch($request));
+			default:
+				return parent::manage($verb, $args, $message, $messageParams);
+		}
+
+	}
+
 }

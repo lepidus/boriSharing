@@ -16,3 +16,23 @@ msgstr "Módulo para Compartir Bori"
 
 msgid "plugins.generic.boriSharing.description"
 msgstr "Este módulo comparte los artículos aprobados con la Agencia Bori"
+
+msgid "plugins.generic.boriSharing.privacyTerms"
+msgstr "Términos de Privacidad"
+
+msgid "plugins.generic.boriSharing.term"
+msgstr "Lorem Ipsum é simplesmente uma simulação de texto da indústria tipográfica e de impressos, 
+        e vem sendo utilizado desde o século XVI, quando um impressor desconhecido pegou uma bandeja de tipos e os 
+        embaralhou para fazer um livro de modelos de tipos. Lorem Ipsum sobreviveu não só a cinco séculos, como também 
+        ao salto para a editoração eletrônica, permanecendo essencialmente inalterado. Se popularizou na década de 60, 
+        quando a Letraset lançou decalques contendo passagens de Lorem Ipsum, e mais recentemente quando passou a ser 
+        integrado a softwares de editoração eletrônica como Aldus PageMaker."
+
+msgid "plugins.generic.boriSharing.acceptTerms"
+msgstr "Aceptar los terminos"
+
+msgid "plugins.generic.boriSharing.termsAcceptedSuccessfully"
+msgstr "Términos aceptados con éxito"
+
+msgid "plugins.generic.boriSharing.alreadyAcceptedTerms"
+msgstr "Los términos de privacidad han sido aceptados previamente"
