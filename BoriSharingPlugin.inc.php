@@ -25,8 +25,13 @@ class BoriSharingPlugin extends GenericPlugin {
 		
 		if (!Config::getVar('general', 'installed') || defined('RUNNING_UPGRADE')) return true;
 		if ($success && $this->getEnabled($mainContextId)) {
-			HookRegistry::register('EditorAction::recordDecision', [$this, 'shareWhenArticleApproved']);
-			HookRegistry::register('Publication::publish', array($this, 'shareWhenArticlePublished'));
+			$contextId = Application::get()->getRequest()->getContext()->getId();
+			$termsAccepted = $this->getSetting($contextId, 'terms_accepted');
+			
+			if(!empty($termsAccepted)) {
+				HookRegistry::register('EditorAction::recordDecision', [$this, 'shareWhenArticleApproved']);
+				HookRegistry::register('Publication::publish', array($this, 'shareWhenArticlePublished'));
+			}
 		}
 		return $success;
 	}
@@ -137,7 +142,7 @@ class BoriSharingPlugin extends GenericPlugin {
 					if ($form->validate()) {
 						$form->execute();
 
-						$notificationContent = __('plugins.generic.boriSharing.termsAcceptedSuccess');
+						$notificationContent = __('plugins.generic.boriSharing.termsAcceptedSuccessfully');
 						$currentUser = $request->getUser();
 						$notificationMgr = new NotificationManager();
 						$notificationMgr->createTrivialNotification($currentUser->getId(), NOTIFICATION_TYPE_SUCCESS, array('contents' => $notificationContent));
