@@ -1,6 +1,6 @@
 <?php
 import ('plugins.generic.boriSharing.classes.SubmissionToShare');
-import('lib.pkp.classes.mail.Mail');
+import ('plugins.generic.boriSharing.classes.MailSender');
 
 class SubmissionSharer {
 
@@ -54,36 +54,19 @@ class SubmissionSharer {
         return $emailBody;
     }
 
-    private function shareByMail($subject, $body, $sendDocuments) {
-        $mail = new Mail();
-
-        $fromEmail = $this->sender;
-        $fromName = $this->submissionToShare->getJournalInitials();
-        $mail->setFrom($fromEmail, $fromName);
+    private function shareByMail($subject, $body, $attachments = array()) {
+        $sender = new Person($this->submissionToShare->getJournalInitials(), $this->sender);
+        $recipient = new Person("", $this->recipient);
         
-        $mail->setRecipients([
-            [
-                'name' => "",
-                'email' => $this->recipient,
-            ],
-        ]);
-        $mail->setSubject($subject);
-        $mail->setBody($body);
-
-        if($sendDocuments) {
-            foreach($this->submissionToShare->getDocuments() as $document) {
-                $mail->addAttachment($document->getPath(), $document->getName());
-            }
-        }
-
-        $mail->send();
+        $mailSender = new MailSender();
+        $mailSender->sendMail($sender, $recipient, $subject, $body, $attachments);
     }
 
     public function shareAccepted() {
-        $this->shareByMail($this->getAcceptedEmailSubject(), $this->getAcceptedEmailBody(), true);
+        $this->shareByMail($this->getAcceptedEmailSubject(), $this->getAcceptedEmailBody(), $this->submissionToShare->getDocuments());
     }
 
     public function sharePublished() {
-        $this->shareByMail($this->getPublishedEmailSubject(), $this->getPublishedEmailBody(), false);
+        $this->shareByMail($this->getPublishedEmailSubject(), $this->getPublishedEmailBody());
     }
 }

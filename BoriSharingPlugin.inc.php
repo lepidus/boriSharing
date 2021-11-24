@@ -147,6 +147,8 @@ class BoriSharingPlugin extends GenericPlugin {
 						$notificationMgr = new NotificationManager();
 						$notificationMgr->createTrivialNotification($currentUser->getId(), NOTIFICATION_TYPE_SUCCESS, array('contents' => $notificationContent));
 
+						$this->notifyPluginWorking($request, $context);
+
 						return new JSONMessage(true);
 					}
 				}
@@ -156,6 +158,22 @@ class BoriSharingPlugin extends GenericPlugin {
 				return parent::manage($verb, $args, $message, $messageParams);
 		}
 
+	}
+
+	private function notifyPluginWorking($request, $context) {
+		$journalInitials = $context->getLocalizedData('acronym');
+		$journalName = $context->getLocalizedName();
+		$journalURL = $request->getBaseUrl() . '/index.php/' . $context->getData('urlPath');
+		$dateStartedWorking = date('d/m/Y', time());
+
+		$subject = "Plugin de compartilhamento ativo na revista {$journalInitials}";
+		$body = "O plugin de compartilhamento com a Bori foi ativado em {$dateStartedWorking} na {$journalName}: <a href=\"{$journalURL}\">{$journalURL}</a>";
+
+		$sender = new Person($journalInitials, $context->getData('contactEmail'));
+		$recipient = new Person("", AGENCY_EMAIL);
+		
+		$mailSender = new MailSender();
+		$mailSender->sendMail($sender, $recipient, $subject, $body);
 	}
 
 }
