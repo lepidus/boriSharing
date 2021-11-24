@@ -26,11 +26,15 @@ class SubmissionSharer {
         return $this->recipient;
     }
 
-    public function getEmailSubject(): string {
+    public function getAcceptedEmailSubject(): string {
         return "Artigo {$this->submissionToShare->getId()} aprovado na revista {$this->submissionToShare->getJournalInitials()}";
     }
 
-    public function getEmailBody(): string {
+    public function getPublishedEmailSubject(): string {
+        return "Artigo {$this->submissionToShare->getId()} publicado na revista {$this->submissionToShare->getJournalInitials()}";
+    }
+
+    public function getAcceptedEmailBody(): string {
         $emailBody = "<strong>Sigla do periódico:</strong> {$this->submissionToShare->getJournalInitials()}<br>";
         $emailBody .= "<strong>Identificador do artigo:</strong> {$this->submissionToShare->getId()}<br>";
         $emailBody .= "<strong>Título do artigo:</strong> {$this->submissionToShare->getTitle()}<br><br>";
@@ -42,7 +46,15 @@ class SubmissionSharer {
         return $emailBody;
     }
 
-    public function share() {
+    public function getPublishedEmailBody(): string {
+        $emailBody = "<strong>Título do artigo:</strong> {$this->submissionToShare->getTitle()}<br>";
+        $emailBody .= "<strong>Data de publicação:</strong> {$this->submissionToShare->getDatePublished()}<br>";
+        $emailBody .= "<strong>Editor(a) que publicou:</strong> {$this->submissionToShare->getEditor()->asRecord()}<br>";
+
+        return $emailBody;
+    }
+
+    private function shareByMail($subject, $body, $sendDocuments) {
         $mail = new Mail();
 
         $fromEmail = $this->sender;
@@ -55,13 +67,23 @@ class SubmissionSharer {
                 'email' => $this->recipient,
             ],
         ]);
-        $mail->setSubject($this->getEmailSubject());
-        $mail->setBody($this->getEmailBody());
+        $mail->setSubject($subject);
+        $mail->setBody($body);
 
-        foreach($this->submissionToShare->getDocuments() as $document) {
-            $mail->addAttachment($document->getPath(), $document->getName());
+        if($sendDocuments) {
+            foreach($this->submissionToShare->getDocuments() as $document) {
+                $mail->addAttachment($document->getPath(), $document->getName());
+            }
         }
 
         $mail->send();
+    }
+
+    public function shareAccepted() {
+        $this->shareByMail($this->getAcceptedEmailSubject(), $this->getAcceptedEmailBody(), true);
+    }
+
+    public function sharePublished() {
+        $this->shareByMail($this->getPublishedEmailSubject(), $this->getPublishedEmailBody(), false);
     }
 }

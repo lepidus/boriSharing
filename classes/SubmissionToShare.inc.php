@@ -9,6 +9,7 @@ class SubmissionToShare {
     private $abstract;
     private $journalInitials;
     private $dateAccepted;
+    private $datePublished;
     private $editor;
     private $authors;
     private $documents;
@@ -53,6 +54,14 @@ class SubmissionToShare {
         $this->dateAccepted = new DateTime($dateAccepted);
     }
     
+    public function getDatePublished(): string {
+        return $this->datePublished->format("d/m/Y");
+    }
+
+    public function setDatePublished(string $datePublished) {
+        $this->datePublished = new DateTime($datePublished);
+    }
+
     public function getEditor(): Person {
         return $this->editor;
     }
