@@ -10,9 +10,12 @@
 
 		{fbvFormArea id="BoriSettingsFormArea"}
             {if not $termsAccepted}      
-                {fbvFormSection title="plugins.generic.boriSharing.privacyTerms" list=true}
-                    {translate key="plugins.generic.boriSharing.term"}    
-                    {fbvElement type="checkbox" name="termsAccepted" id="termsCheckbox" value="1" checked=$termsAccepted label="plugins.generic.boriSharing.acceptTerms" translate=true}
+                {fbvFormSection title="plugins.generic.boriSharing.privacyTerms" }
+                    <div style="text-align: justify;">{translate key="plugins.generic.boriSharing.term"}</div>
+                    <label>
+						<input type="checkbox" name="termsAccepted" id="termsCheckbox" value="1"/>
+						{translate key="plugins.generic.boriSharing.acceptTerms"}
+					</label>
                 {/fbvFormSection}
 			    {fbvFormButtons id="boriPluginSettingsFormSubmit" submitText="common.save" hideCancel=true}
 			{else}
