@@ -2,7 +2,8 @@
 /**
  * @file plugins/generic/boriSharing/BoriSharingPlugin.inc.php
  *
- * Copyright (c) 2021 Lepidus Tecnologia
+ * Copyright (c) 2021 Agência Bori
+ * Developed by Lepidus Tecnologia
  * Distributed under the GNU GPL v3. For full terms see LICENSE or https://www.gnu.org/licenses/gpl-3.0.txt
  *
  * @class BoriSharingPlugin
