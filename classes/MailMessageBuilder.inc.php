@@ -3,7 +3,7 @@ import ('plugins.generic.boriSharing.classes.SubmissionToShare');
 import ('plugins.generic.boriSharing.classes.MailMessage');
 import ('plugins.generic.boriSharing.classes.Person');
 
-define('AGENCY_EMAIL', "agenciateste@lepidus.com.br");
+define('AGENCY_EMAIL', "bori@abori.com.br");
 
 class MailMessageBuilder {
 

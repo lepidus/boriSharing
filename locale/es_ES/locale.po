@@ -21,12 +21,24 @@ msgid "plugins.generic.boriSharing.privacyTerms"
 msgstr "Términos de Privacidad"
 
 msgid "plugins.generic.boriSharing.term"
-msgstr "Lorem Ipsum é simplesmente uma simulação de texto da indústria tipográfica e de impressos, 
-        e vem sendo utilizado desde o século XVI, quando um impressor desconhecido pegou uma bandeja de tipos e os 
-        embaralhou para fazer um livro de modelos de tipos. Lorem Ipsum sobreviveu não só a cinco séculos, como também 
-        ao salto para a editoração eletrônica, permanecendo essencialmente inalterado. Se popularizou na década de 60, 
-        quando a Letraset lançou decalques contendo passagens de Lorem Ipsum, e mais recentemente quando passou a ser 
-        integrado a softwares de editoração eletrônica como Aldus PageMaker."
+msgstr ""
+"<p>Ao instalar o Plug-in da Bori no seu periódico científico, todos os artigos aprovados pelo periódico científico serão compartilhados com a Agência Bori, que eventualmente poderá selecionar um desses artigos científicos para divulgação para imprensa."
+"Isso significa antecipar artigos científicos em área restrita da Agência Bori para jornalistas previamente cadastrados, acompanhados de um texto explicativo elaborado pela Agência Bori até a data de publicação do artigo no periódico científico, a partir da qual as reportagens jornalísticas poderão ser publicadas.</p>"
+"<p>Como editor do periódico científico, concordo em:<br><ul>"
+"<li>Aceitar que o Plug-in colete e envie metadados e manuscrito completo de artigos automaticamente para a Agência Bori assim que eles sejam aprovados para publicação;</li>"
+"<li>Cooperar com o processo de produção dos press releases da Bori, mantendo-se disponível por meio de comunicação via e-mail;</li>"
+"<li>Acordar com a Agência Bori data e hora de publicação do artigo selecionado para disseminação via agência;</li>"
+"<li>Garantir exclusividade da Agência Bori na disseminação dos artigos científicos para a imprensa brasileira, sem a produção de press releases paralelos;</li>"
+"<li>Não divulgar informações contidas no artigo selecionado a qualquer pessoa, seja jornalista ou contato pessoal;</li>"
+"<li>Somente publicar no site da revista artigo selecionado pela Bori para disseminação em data e hora acordadas com a agência;</li>"
+"<li>Em caso de descumprimento da data de publicação acordada, comunicar a Bori imediatamente no e-mail bori@abori.com.br.</li></ul></p>"
+"<p>A Bori se compromete a:<br><ul>"
+"<li>Fazer a curadoria dos artigos científicos aprovados pelo periódico científico a partir de critérios jornalísticos estabelecidos por sua equipe;</li>"
+"<li>Disseminar estudos científicos de forma antecipada apenas após determinação da data de publicação com equipe do periódico;</li>"
+"<li>Utilizar os manuscritos de artigos do periódico científico somente para fins de disseminação na sua plataforma, quando acordado com editor científico e/ou equipe editorial;</li>"
+"<li>Disponibilizar os manuscritos dos artigos em área restrita na sua plataforma apenas para jornalistas cadastrados nos seus serviços, para fins de consulta;</li>"
+"<li>Rever e atualizar seus protocolos constantemente para assegurar a manutenção do ineditismo do artigo científico antes da sua publicação;</li>"
+"<li>Em caso de dificuldade de contato com equipe editorial do periódico científico durante processo de acordo de data de publicação, a Bori cancelará a disseminação do estudo.</li></ul></p>"
 
 msgid "plugins.generic.boriSharing.acceptTerms"
 msgstr "Aceptar los terminos"
