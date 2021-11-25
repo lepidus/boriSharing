@@ -1,13 +1,11 @@
 <?php
 use PHPUnit\Framework\TestCase;
 import ('plugins.generic.boriSharing.classes.SubmissionToShare');
-import ('plugins.generic.boriSharing.classes.SubmissionSharer');
+import ('plugins.generic.boriSharing.classes.MailMessageBuilder');
 
-class SubmissionSharerTest extends TestCase {
+class MailMessageBuilderTest extends TestCase {
 
-    private $submissionSharer;
-    private $sender = "admin.journal@lepidus.com.br";
-    private $recipient = "agenciateste@lepidus.com.br"; 
+    private $mailMessageBuilder;
     
     private $submissionToShare;
     private $submissionId = 3532;
@@ -21,9 +19,14 @@ class SubmissionSharerTest extends TestCase {
     private $editor;
     private $authors;
 
+    private $datePluginStartedWorking = "25/12/2021";
+    private $journalName = "Revista Brasileira de Formas Geométricas";
+    private $journalUrl = "http://rbdg.emnuvens.com.br/";
+
+
     public function setUp(): void {
         $this->createSubmissionToShare();
-        $this->submissionSharer = new SubmissionSharer($this->submissionToShare, $this->sender, $this->recipient);
+        $this->mailMessageBuilder = new MailMessageBuilder();
     }
 
     private function createSubmissionToShare() {
@@ -41,29 +44,31 @@ class SubmissionSharerTest extends TestCase {
         $this->submissionToShare->setAuthors($this->authors);
     }
 
-    public function testSharerHasSubmission(): void {
-        $this->assertEquals($this->submissionToShare, $this->submissionSharer->getSubmissionToShare());
-    }
-    
-    public function testSharerHasSender(): void {
-        $this->assertEquals($this->sender, $this->submissionSharer->getSender());
-    }
-
-    public function testSharerHasRecipient(): void {
-        $this->assertEquals($this->recipient, $this->submissionSharer->getRecipient());
-    }
-
-    public function testSharerWritesAcceptedEmailSubject(): void {
+    public function testBuilderWritesSubmissionAcceptedEmailSubject(): void {
         $expectedAcceptedSubject = "Artigo 3532 aprovado na revista RBFG";
-        $this->assertEquals($expectedAcceptedSubject, $this->submissionSharer->getAcceptedEmailSubject());
+        
+        $this->mailMessageBuilder->buildSubmissionAcceptedEmailSubject($this->submissionToShare);
+        $mailMessage = $this->mailMessageBuilder->getMailMessage();
+        $this->assertEquals($expectedAcceptedSubject, $mailMessage->getSubject());
     }
 
-    public function testSharerWritesPublishedEmailSubject(): void {
+    public function testBuilderWritesSubmissionPublishedEmailSubject(): void {
         $expectedPublishedSubject= "Artigo 3532 publicado na revista RBFG";
-        $this->assertEquals($expectedPublishedSubject, $this->submissionSharer->getPublishedEmailSubject());
+        
+        $this->mailMessageBuilder->buildSubmissionPublishedEmailSubject($this->submissionToShare);
+        $mailMessage = $this->mailMessageBuilder->getMailMessage();
+        $this->assertEquals($expectedPublishedSubject, $mailMessage->getSubject());
     }
 
-    public function testSharerWritesAcceptedEmailBody(): void {
+    public function testBuilderWritesPluginIsWorkingEmailSubject(): void {
+        $expectedPluginWorkingSubject= "Plugin de compartilhamento ativo na revista RBFG";
+        
+        $this->mailMessageBuilder->buildPluginWorkingEmailSubject($this->journalInitials);
+        $mailMessage = $this->mailMessageBuilder->getMailMessage();
+        $this->assertEquals($expectedPluginWorkingSubject, $mailMessage->getSubject());
+    }
+
+    public function testBuilderWritesSubmissionAcceptedEmailBody(): void {
         $expectedBody = "<strong>Sigla do periódico:</strong> RBFG<br>";
         $expectedBody .= "<strong>Identificador do artigo:</strong> 3532<br>";
         $expectedBody .= "<strong>Título do artigo:</strong> O caso dos cones mágicos<br><br>";
@@ -72,15 +77,27 @@ class SubmissionSharerTest extends TestCase {
         $expectedBody .= "<strong>Data de aprovação:</strong> 11/11/2021<br>";
         $expectedBody .= "<strong>Editor da revista (ou responsável por aprovar o artigo):</strong> João Gandalf (joaogandalf@lepidus.com.br)<br>";
 
-        $this->assertEquals($expectedBody, $this->submissionSharer->getAcceptedEmailBody());
+        $this->mailMessageBuilder->buildSubmissionAcceptedEmailBody($this->submissionToShare);
+        $mailMessage = $this->mailMessageBuilder->getMailMessage();
+        $this->assertEquals($expectedBody, $mailMessage->getBody());
     }
 
-    public function testSharerWritesPublishedEmailBody(): void {
+    public function testBuilderWritesSubmissionPublishedEmailBody(): void {
         $expectedBody = "<strong>Título do artigo:</strong> O caso dos cones mágicos<br>";
         $expectedBody .= "<strong>Data de publicação:</strong> 23/11/2021<br>";
         $expectedBody .= "<strong>Editor(a) que publicou:</strong> João Gandalf (joaogandalf@lepidus.com.br)<br>";
 
-        $this->assertEquals($expectedBody, $this->submissionSharer->getPublishedEmailBody());
+        $this->mailMessageBuilder->buildSubmissionPublishedEmailBody($this->submissionToShare);
+        $mailMessage = $this->mailMessageBuilder->getMailMessage();
+        $this->assertEquals($expectedBody, $mailMessage->getBody());
+    }
+
+    public function testBuilderWritesPluginIsWorkingEmailBody(): void {
+        $expectedBody = "O plugin de compartilhamento com a Bori foi ativado em 25/12/2021 na Revista Brasileira de Formas Geométricas: <a href=\"http://rbdg.emnuvens.com.br/\">http://rbdg.emnuvens.com.br/</a>";
+
+        $this->mailMessageBuilder->buildPluginWorkingEmailBody($this->datePluginStartedWorking, $this->journalName, $this->journalUrl);
+        $mailMessage = $this->mailMessageBuilder->getMailMessage();
+        $this->assertEquals($expectedBody, $mailMessage->getBody());
     }
 
 }
