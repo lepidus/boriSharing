@@ -18,7 +18,9 @@ class MailMessageBuilderTest extends TestCase {
     private $datePublishedLocalized = "23/11/2021";
     private $editor;
     private $authors;
+    private $documents;
 
+    private $journalPrimaryContact = "contato.rbfg@emnuvens.com.br";
     private $datePluginStartedWorking = "25/12/2021";
     private $journalName = "Revista Brasileira de Formas Geométricas";
     private $journalUrl = "http://rbdg.emnuvens.com.br/";
@@ -32,6 +34,7 @@ class MailMessageBuilderTest extends TestCase {
     private function createSubmissionToShare() {
         $this->editor = new Person("João Gandalf", "joaogandalf@lepidus.com.br");
         $this->authors = [new Person("Juliana Bolseiro", "jubolseiro@lepidus.com.br", "Lepidus"), new Person("Saruman Medeiros", "saruman@lepidus.com.br", "Lepidus")];
+        $this->documents = [new SubmissionDocument("/public/journals/00/article.pdf", "Final Article")];
         $this->submissionToShare = new SubmissionToShare();
         
         $this->submissionToShare->setId($this->submissionId);
@@ -42,6 +45,15 @@ class MailMessageBuilderTest extends TestCase {
         $this->submissionToShare->setDatePublished($this->datePublishedOriginal);
         $this->submissionToShare->setEditor($this->editor);
         $this->submissionToShare->setAuthors($this->authors);
+        $this->submissionToShare->setDocuments($this->documents);
+    }
+
+    public function testBuilderSetsEmailSender(): void {
+        $expectedSender = new Person($this->journalInitials, $this->journalPrimaryContact);
+
+        $this->mailMessageBuilder->buildEmailSender($this->journalInitials, $this->journalPrimaryContact);
+        $mailMessage = $this->mailMessageBuilder->getMailMessage();
+        $this->assertEquals($expectedSender, $mailMessage->getSender());
     }
 
     public function testBuilderWritesSubmissionAcceptedEmailSubject(): void {
@@ -98,6 +110,12 @@ class MailMessageBuilderTest extends TestCase {
         $this->mailMessageBuilder->buildPluginWorkingEmailBody($this->datePluginStartedWorking, $this->journalName, $this->journalUrl);
         $mailMessage = $this->mailMessageBuilder->getMailMessage();
         $this->assertEquals($expectedBody, $mailMessage->getBody());
+    }
+
+    public function testBuilderSetsAttachments(): void {
+        $this->mailMessageBuilder->buildEmailAttachments($this->submissionToShare);
+        $mailMessage = $this->mailMessageBuilder->getMailMessage();
+        $this->assertEquals($this->documents, $mailMessage->getAttachments());
     }
 
 }

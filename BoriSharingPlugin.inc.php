@@ -14,9 +14,7 @@ import('classes.workflow.EditorDecisionActionsManager');
 import('lib.pkp.classes.submission.SubmissionFile');
 import('lib.pkp.classes.plugins.GenericPlugin');
 import('plugins.generic.boriSharing.classes.SubmissionToShareFactory');
-import('plugins.generic.boriSharing.classes.SubmissionSharer');
-
-define('AGENCY_EMAIL', "agenciateste@lepidus.com.br");
+import('plugins.generic.boriSharing.classes.MailMessageBuilder');
 
 class BoriSharingPlugin extends GenericPlugin {
 
@@ -56,9 +54,14 @@ class BoriSharingPlugin extends GenericPlugin {
 			$submissionFiles = $this->getSubmissionFiles($submission);
 			$submissionToShare = $submissionToShareFactory->createAcceptedSubmission($journal, $submission, $editor, $dateAccepted, $submissionFiles);
 			
-			$sender = $journal->getData('contactEmail');
-			$submissionSharer = new SubmissionSharer($submissionToShare, $sender, AGENCY_EMAIL);
-			$submissionSharer->shareAccepted();
+			$mailMessageBuilder = new MailMessageBuilder();
+			$mailMessageBuilder->buildEmailSender($journal->getLocalizedData('acronym'), $journal->getData('contactEmail'));
+			$mailMessageBuilder->buildSubmissionAcceptedEmailSubject($submissionToShare);
+			$mailMessageBuilder->buildSubmissionAcceptedEmailBody($submissionToShare);
+			$mailMessageBuilder->buildEmailAttachments($submissionToShare);
+			
+			$mailMessage = $mailMessageBuilder->getMailMessage();
+			$mailMessage->send();
 		}
 		
 		return false;
@@ -81,14 +84,17 @@ class BoriSharingPlugin extends GenericPlugin {
 
 		$journal = DAORegistry::getDAO('JournalDAO')->getById($submission->getData('contextId'));
 		$datePublished = $publication->getData('datePublished');
+		$editor = Application::get()->getRequest()->getUser();
 		
-		$request = Application::get()->getRequest();
-		$editor = $request->getUser();
 		$submissionToShare = $submissionToShareFactory->createPublishedSubmission($journal, $submission, $editor, $datePublished);
 
-		$sender = $journal->getData('contactEmail');
-		$submissionSharer = new SubmissionSharer($submissionToShare, $sender, AGENCY_EMAIL);
-		$submissionSharer->sharePublished();
+		$mailMessageBuilder = new MailMessageBuilder();
+		$mailMessageBuilder->buildEmailSender($journal->getLocalizedData('acronym'), $journal->getData('contactEmail'));
+		$mailMessageBuilder->buildSubmissionPublishedEmailSubject($submissionToShare);
+		$mailMessageBuilder->buildSubmissionPublishedEmailBody($submissionToShare);
+		
+		$mailMessage = $mailMessageBuilder->getMailMessage();
+		$mailMessage->send();
 	}
 
 	public function getActions($request, $actionArgs) {
@@ -147,7 +153,7 @@ class BoriSharingPlugin extends GenericPlugin {
 						$notificationMgr = new NotificationManager();
 						$notificationMgr->createTrivialNotification($currentUser->getId(), NOTIFICATION_TYPE_SUCCESS, array('contents' => $notificationContent));
 
-						$this->notifyPluginWorking($request, $context);
+						$this->notifyThatPluginIsWorking($request, $context);
 
 						return new JSONMessage(true);
 					}
@@ -160,20 +166,19 @@ class BoriSharingPlugin extends GenericPlugin {
 
 	}
 
-	private function notifyPluginWorking($request, $context) {
+	private function notifyThatPluginIsWorking($request, $context) {
 		$journalInitials = $context->getLocalizedData('acronym');
 		$journalName = $context->getLocalizedName();
 		$journalURL = $request->getBaseUrl() . '/index.php/' . $context->getData('urlPath');
 		$dateStartedWorking = date('d/m/Y', time());
 
-		$subject = "Plugin de compartilhamento ativo na revista {$journalInitials}";
-		$body = "O plugin de compartilhamento com a Bori foi ativado em {$dateStartedWorking} na {$journalName}: <a href=\"{$journalURL}\">{$journalURL}</a>";
-
-		$sender = new Person($journalInitials, $context->getData('contactEmail'));
-		$recipient = new Person("", AGENCY_EMAIL);
+		$mailMessageBuilder = new MailMessageBuilder();
+		$mailMessageBuilder->buildEmailSender($journalInitials, $context->getData('contactEmail'));
+		$mailMessageBuilder->buildPluginWorkingEmailSubject($journalInitials);
+		$mailMessageBuilder->buildPluginWorkingEmailBody($dateStartedWorking, $journalName, $journalURL);
 		
-		$mailSender = new MailSender();
-		$mailSender->sendMail($sender, $recipient, $subject, $body);
+		$mailMessage = $mailMessageBuilder->getMailMessage();
+		$mailMessage->send();
 	}
 
 }
