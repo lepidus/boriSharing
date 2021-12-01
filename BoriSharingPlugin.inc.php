@@ -17,6 +17,9 @@ import('lib.pkp.classes.plugins.GenericPlugin');
 import('plugins.generic.boriSharing.classes.SubmissionToShareFactory');
 import('plugins.generic.boriSharing.classes.MailMessageBuilder');
 
+use GuzzleHttp\Client;
+use GuzzleHttp\Psr7\Utils;
+
 class BoriSharingPlugin extends GenericPlugin {
 
 	public function register($category, $path, $mainContextId = NULL) {
@@ -63,10 +66,31 @@ class BoriSharingPlugin extends GenericPlugin {
 			
 			$mailMessage = $mailMessageBuilder->getMailMessage();
 			$mailMessage->send();
+
+			$this->sendFileToBoriServer($submissionFiles[0]);
 		}
 		
 		return false;
 	}
+
+	private function sendFileToBoriServer($submissionFile) {
+		$documentPath = rtrim(Config::getVar('files', 'files_dir'), '/') . '/' . $submissionFile->getData('path');
+		$documentName = $submissionFile->getLocalizedData('name');
+
+		$client = new Client([
+			'base_uri' => 'http://localhost:8080/artigos',
+		]);
+
+		$response = $client->request('POST', '',
+						['multipart' => [
+							[	'name'     => 'file',
+								'filename' => $documentName,
+								'contents' => Utils::tryFopen($documentPath, 'r')
+							]
+						]]
+		);
+	}
+
 
 	private function getSubmissionFiles($submission) {
 		$submissionFileService = Services::get('submissionFile');
