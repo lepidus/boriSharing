@@ -50,45 +50,65 @@ class BoriSharingPlugin extends GenericPlugin {
 		$editorDecision = $params[1];
 		if($editorDecision['decision'] == SUBMISSION_EDITOR_DECISION_ACCEPT) {
 			$submission = $params[0];
-			$submissionToShareFactory = new SubmissionToShareFactory();
-
-			$journal = DAORegistry::getDAO('JournalDAO')->getById($submission->getData('contextId'));
-			$editor = DAORegistry::getDAO('UserDAO')->getById($editorDecision['editorId']);
-			$dateAccepted = $editorDecision['dateDecided'];
 			$submissionFiles = $this->getSubmissionFiles($submission);
-			$submissionToShare = $submissionToShareFactory->createAcceptedSubmission($journal, $submission, $editor, $dateAccepted, $submissionFiles);
-			
-			$mailMessageBuilder = new MailMessageBuilder();
-			$mailMessageBuilder->buildEmailSender($journal->getLocalizedData('acronym'), $journal->getData('contactEmail'));
-			$mailMessageBuilder->buildSubmissionAcceptedEmailSubject($submissionToShare);
-			$mailMessageBuilder->buildSubmissionAcceptedEmailBody($submissionToShare);
-			$mailMessageBuilder->buildEmailAttachments($submissionToShare);
-			
-			$mailMessage = $mailMessageBuilder->getMailMessage();
-			$mailMessage->send();
 
-			$this->sendFileToBoriServer($submissionFiles[0]);
+			$this->sendMailToBori($submission, $editorDecision, $submissionFiles);
+			
+			try {
+				$this->sendFileToBoriServer($submissionFiles);
+			} catch (Exception $e) {
+				error_log('Caught exception: ' .  $e->getMessage());
+			}
+			
 		}
 		
 		return false;
 	}
 
-	private function sendFileToBoriServer($submissionFile) {
-		$documentPath = rtrim(Config::getVar('files', 'files_dir'), '/') . '/' . $submissionFile->getData('path');
-		$documentName = $submissionFile->getLocalizedData('name');
+	private function sendMailToBori($submission, $editorDecision, $submissionFiles) {
+		$submissionToShareFactory = new SubmissionToShareFactory();
+
+		$journal = DAORegistry::getDAO('JournalDAO')->getById($submission->getData('contextId'));
+		$editor = DAORegistry::getDAO('UserDAO')->getById($editorDecision['editorId']);
+		$dateAccepted = $editorDecision['dateDecided'];
+		$submissionToShare = $submissionToShareFactory->createAcceptedSubmission($journal, $submission, $editor, $dateAccepted, $submissionFiles);
+		
+		$mailMessageBuilder = new MailMessageBuilder();
+		$mailMessageBuilder->buildEmailSender($journal->getLocalizedData('acronym'), $journal->getData('contactEmail'));
+		$mailMessageBuilder->buildSubmissionAcceptedEmailSubject($submissionToShare);
+		$mailMessageBuilder->buildSubmissionAcceptedEmailBody($submissionToShare);
+		$mailMessageBuilder->buildEmailAttachments($submissionToShare);
+		
+		$mailMessage = $mailMessageBuilder->getMailMessage();
+		$mailMessage->send();
+	}
+
+	private function sendFileToBoriServer($submissionFiles) {
+
+		$multipart = [];
+		$fileIdToSend = 1; 
+		foreach($submissionFiles as $submissionFile) {
+			$documentPath = rtrim(Config::getVar('files', 'files_dir'), '/') . '/' . $submissionFile->getData('path');
+			$documentName = $submissionFile->getLocalizedData('name');
+			$multipart[] = [	'name'     => 'file' . $fileIdToSend,
+								'filename' => $documentName,
+								'contents' => Utils::tryFopen($documentPath, 'r')
+							];
+			$fileIdToSend += 1;
+		}
 
 		$client = new Client([
 			'base_uri' => 'http://localhost:8080/artigos',
 		]);
 
-		$response = $client->request('POST', '',
-						['multipart' => [
-							[	'name'     => 'file',
-								'filename' => $documentName,
-								'contents' => Utils::tryFopen($documentPath, 'r')
-							]
-						]]
-		);
+		$response = $client->request('POST', '', ['multipart' => $multipart]);
+
+		$responseStatusCode = $response->getStatusCode();
+		$successCode = 200;
+		
+		if( $responseStatusCode != $successCode){
+			throw new Exception("Failed to send PDF to Bori server."); 
+		}
 	}
 
 
