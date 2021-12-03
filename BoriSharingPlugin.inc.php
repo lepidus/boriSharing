@@ -16,9 +16,8 @@ import('lib.pkp.classes.submission.SubmissionFile');
 import('lib.pkp.classes.plugins.GenericPlugin');
 import('plugins.generic.boriSharing.classes.SubmissionToShareFactory');
 import('plugins.generic.boriSharing.classes.MailMessageBuilder');
-
-use GuzzleHttp\Client;
-use GuzzleHttp\Psr7\Utils;
+import('plugins.generic.boriSharing.classes.BoriMailClient');
+import('plugins.generic.boriSharing.classes.BoriAPIClient');
 
 class BoriSharingPlugin extends GenericPlugin {
 
@@ -52,65 +51,19 @@ class BoriSharingPlugin extends GenericPlugin {
 			$submission = $params[0];
 			$submissionFiles = $this->getSubmissionFiles($submission);
 
-			$this->sendMailToBori($submission, $editorDecision, $submissionFiles);
-			
+			$boriMailClient = new BoriMailClient($submission, $editorDecision, $submissionFiles);
+			$boriMailClient->sendMail();
+
+			$boriAPIClient = new BoriAPIClient();
 			try {
-				$this->sendFileToBoriServer($submissionFiles);
+				$boriAPIClient->sendSubmissionFiles($submissionFiles);
 			} catch (Exception $e) {
 				error_log('Caught exception: ' .  $e->getMessage());
 			}
-			
 		}
 		
 		return false;
 	}
-
-	private function sendMailToBori($submission, $editorDecision, $submissionFiles) {
-		$submissionToShareFactory = new SubmissionToShareFactory();
-
-		$journal = DAORegistry::getDAO('JournalDAO')->getById($submission->getData('contextId'));
-		$editor = DAORegistry::getDAO('UserDAO')->getById($editorDecision['editorId']);
-		$dateAccepted = $editorDecision['dateDecided'];
-		$submissionToShare = $submissionToShareFactory->createAcceptedSubmission($journal, $submission, $editor, $dateAccepted, $submissionFiles);
-		
-		$mailMessageBuilder = new MailMessageBuilder();
-		$mailMessageBuilder->buildEmailSender($journal->getLocalizedData('acronym'), $journal->getData('contactEmail'));
-		$mailMessageBuilder->buildSubmissionAcceptedEmailSubject($submissionToShare);
-		$mailMessageBuilder->buildSubmissionAcceptedEmailBody($submissionToShare);
-		$mailMessageBuilder->buildEmailAttachments($submissionToShare);
-		
-		$mailMessage = $mailMessageBuilder->getMailMessage();
-		$mailMessage->send();
-	}
-
-	private function sendFileToBoriServer($submissionFiles) {
-
-		$multipart = [];
-		$fileIdToSend = 1; 
-		foreach($submissionFiles as $submissionFile) {
-			$documentPath = rtrim(Config::getVar('files', 'files_dir'), '/') . '/' . $submissionFile->getData('path');
-			$documentName = $submissionFile->getLocalizedData('name');
-			$multipart[] = [	'name'     => 'file' . $fileIdToSend,
-								'filename' => $documentName,
-								'contents' => Utils::tryFopen($documentPath, 'r')
-							];
-			$fileIdToSend += 1;
-		}
-
-		$client = new Client([
-			'base_uri' => 'http://localhost:8080/artigos',
-		]);
-
-		$response = $client->request('POST', '', ['multipart' => $multipart]);
-
-		$responseStatusCode = $response->getStatusCode();
-		$successCode = 200;
-		
-		if( $responseStatusCode != $successCode){
-			throw new Exception("Failed to send PDF to Bori server."); 
-		}
-	}
-
 
 	private function getSubmissionFiles($submission) {
 		$submissionFileService = Services::get('submissionFile');
