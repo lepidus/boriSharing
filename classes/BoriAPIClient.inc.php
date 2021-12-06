@@ -23,7 +23,7 @@ class BoriAPIClient {
 		$successCode = 200;
 		
 		if( $responseStatusCode != $successCode){
-			throw new Exception("Failed to send PDF to Bori server."); 
+			throw new Exception("Failed to send file to Bori server."); 
 		}
     }
 
