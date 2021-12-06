@@ -16,6 +16,8 @@ import('lib.pkp.classes.submission.SubmissionFile');
 import('lib.pkp.classes.plugins.GenericPlugin');
 import('plugins.generic.boriSharing.classes.SubmissionToShareFactory');
 import('plugins.generic.boriSharing.classes.MailMessageBuilder');
+import('plugins.generic.boriSharing.classes.BoriMailClient');
+import('plugins.generic.boriSharing.classes.BoriAPIClient');
 
 class BoriSharingPlugin extends GenericPlugin {
 
@@ -47,22 +49,17 @@ class BoriSharingPlugin extends GenericPlugin {
 		$editorDecision = $params[1];
 		if($editorDecision['decision'] == SUBMISSION_EDITOR_DECISION_ACCEPT) {
 			$submission = $params[0];
-			$submissionToShareFactory = new SubmissionToShareFactory();
-
-			$journal = DAORegistry::getDAO('JournalDAO')->getById($submission->getData('contextId'));
-			$editor = DAORegistry::getDAO('UserDAO')->getById($editorDecision['editorId']);
-			$dateAccepted = $editorDecision['dateDecided'];
 			$submissionFiles = $this->getSubmissionFiles($submission);
-			$submissionToShare = $submissionToShareFactory->createAcceptedSubmission($journal, $submission, $editor, $dateAccepted, $submissionFiles);
-			
-			$mailMessageBuilder = new MailMessageBuilder();
-			$mailMessageBuilder->buildEmailSender($journal->getLocalizedData('acronym'), $journal->getData('contactEmail'));
-			$mailMessageBuilder->buildSubmissionAcceptedEmailSubject($submissionToShare);
-			$mailMessageBuilder->buildSubmissionAcceptedEmailBody($submissionToShare);
-			$mailMessageBuilder->buildEmailAttachments($submissionToShare);
-			
-			$mailMessage = $mailMessageBuilder->getMailMessage();
-			$mailMessage->send();
+
+			$boriMailClient = new BoriMailClient($submission, $editorDecision, $submissionFiles);
+			$boriMailClient->sendMail();
+
+			$boriAPIClient = new BoriAPIClient();
+			try {
+				$boriAPIClient->sendSubmissionFiles($submissionFiles);
+			} catch (Exception $e) {
+				error_log('Caught exception: ' .  $e->getMessage());
+			}
 		}
 		
 		return false;
