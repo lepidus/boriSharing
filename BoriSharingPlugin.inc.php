@@ -146,10 +146,13 @@ class BoriSharingPlugin extends GenericPlugin {
 					if ($form->validate()) {
 						$form->execute();
 
-						$notificationContent = __('plugins.generic.boriSharing.termsAcceptedSuccessfully');
+						$notificationAboutTerms = __('plugins.generic.boriSharing.termsAcceptedSuccessfully');
+						$notificationAboutWorking = __('plugins.generic.boriSharing.working');
+						
 						$currentUser = $request->getUser();
 						$notificationMgr = new NotificationManager();
-						$notificationMgr->createTrivialNotification($currentUser->getId(), NOTIFICATION_TYPE_SUCCESS, array('contents' => $notificationContent));
+						$notificationMgr->createTrivialNotification($currentUser->getId(), NOTIFICATION_TYPE_SUCCESS, array('contents' => $notificationAboutTerms));
+						$notificationMgr->createTrivialNotification($currentUser->getId(), NOTIFICATION_TYPE_SUCCESS, array('contents' => $notificationAboutWorking));
 
 						$this->notifyThatPluginIsWorking($request, $context);
 

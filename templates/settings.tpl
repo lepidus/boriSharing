@@ -20,13 +20,8 @@
 
 				{fbvFormSection title="plugins.generic.boriSharing.authKey"}
                     <div>			
-						{fbvFormSection label="plugins.generic.boriSharing.userAuthKey"}
-							{fbvElement type="text" id="userAuthKey" required="true" value=$userAuthKey maxlength="32" size=$fbvStyles.size.MEDIUM}
-						{/fbvFormSection}
-					</div>
-					<div>			
-						{fbvFormSection label="plugins.generic.boriSharing.passwordAuthKey"}
-							{fbvElement type="text" password=true required="true" id="passwordAuthKey" value=$passwordAuthKey maxlength="32" size=$fbvStyles.size.MEDIUM}
+						{fbvFormSection }
+							{fbvElement type="text" id="userAuthKey" label="plugins.generic.boriSharing.userAuthKey" required="true" value=$userAuthKey maxlength="32" size=$fbvStyles.size.MEDIUM}
 						{/fbvFormSection}
 					</div>
                 {/fbvFormSection}

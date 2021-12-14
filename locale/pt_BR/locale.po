@@ -46,6 +46,9 @@ msgstr "Aceitar termos"
 msgid "plugins.generic.boriSharing.termsAcceptedSuccessfully"
 msgstr "Termos aceitos com sucesso"
 
+msgid "plugins.generic.boriSharing.working"
+msgstr "Plugin em funcionamento"
+
 msgid "plugins.generic.boriSharing.alreadyAcceptedTerms"
 msgstr "Os termos de privacidade já foram aceitos anteriormente"
 
@@ -53,7 +56,7 @@ msgid "plugins.generic.boriSharing.authKey"
 msgstr "Chave de Autenticação"
 
 msgid "plugins.generic.boriSharing.userAuthKey"
-msgstr "Usuário"
+msgstr "Chave"
 
 msgid "plugins.generic.boriSharing.passwordAuthKey"
 msgstr "Senha"
