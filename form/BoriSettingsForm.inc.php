@@ -16,13 +16,17 @@ class BoriSettingsForm extends Form {
 
 	public function fetch($request, $template = null, $display = false) {
 		$termsAccepted = $this->_plugin->getSetting($this->_contextId, 'terms_accepted');
+		$userAuthKey = $this->_plugin->getSetting($this->_contextId, 'user_auth_key');
+		$passwordAuthKey = $this->_plugin->getSetting($this->_contextId, 'password_auth_key');
 		
 		if(empty($termsAccepted)) $termsAccepted = false;
 
 		$templateMgr = TemplateManager::getManager($request);
 		$templateMgr->assign(array(
 			'pluginName' => $this->_plugin->getName(),
-			'termsAccepted' => $termsAccepted
+			'termsAccepted' => $termsAccepted,
+			'userAuthKey' => $userAuthKey,
+			'passwordAuthKey' => $passwordAuthKey
 		));
 
 		return parent::fetch($request, $template, $display);
@@ -43,6 +47,8 @@ class BoriSettingsForm extends Form {
 		parent::execute(...$functionArgs);
 
 		$this->_plugin->updateSetting($this->_contextId, 'terms_accepted', serialize($this->getData('termsAccepted')));
+		$this->_plugin->updateSetting($this->_contextId, 'user_auth_key', serialize($this->getData('userAuthKey')));
+		$this->_plugin->updateSetting($this->_contextId, 'password_auth_key', serialize($this->getData('passwordAuthKey')));
 	
 		$pluginSettingsDao = DAORegistry::getDAO('PluginSettingsDAO');
 		$pluginSettingsDao->installSettings($this->_contextId, $this->_plugin->getName(), $this->_plugin->getContextSpecificPluginSettingsFile());
