@@ -4,7 +4,6 @@ import ('plugins.generic.boriSharing.classes.SubmissionToShare');
 import ('plugins.generic.boriSharing.classes.Person');
 import ('plugins.generic.boriSharing.classes.SubmissionDocument');
 
-error_log("------- TESTES DO BORI SHARING ---------");
 
 class SubmissionToShareTest extends TestCase {
 
