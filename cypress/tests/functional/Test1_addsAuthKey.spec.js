@@ -11,7 +11,7 @@ function testAcceptPrivacyTermsWithoutAuth() {
 
 function testAcceptPrivacyTermsWithAuth() {
     cy.get('input[id^=userAuthKey]').click();
-    cy.get('input[id^=userAuthKey]').type( Cypress.env('UserKeyAuth'), { delay: 1 });
+    cy.get('input[id^=userAuthKey]').type( Cypress.env('UserAuthKey'), { delay: 1 });
     cy.get('button[id^=submitFormButton]').contains('Save').click();
     cy.get('.app__notifications > :nth-child(1) > :nth-child(2)').contains('Plugin working').should('exist');
 }
