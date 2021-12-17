@@ -14,7 +14,7 @@ class BoriAPIClient {
         $multipart = $this->createMultipartToRequest($submissionFiles);
 
 		$client = new Client([
-			'base_uri' => 'http://localhost:8080/artigos',
+			'base_uri' => 'http://localhost:8080/articlefiles',
 		]);
 
 		$response = $client->request('POST', '', ['multipart' => $multipart]);

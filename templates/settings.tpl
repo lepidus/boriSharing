@@ -17,6 +17,15 @@
 						{translate key="plugins.generic.boriSharing.acceptTerms"}
 					</label>
                 {/fbvFormSection}
+
+				{fbvFormSection title="plugins.generic.boriSharing.authKey"}
+                    <div>			
+						{fbvFormSection }
+							{fbvElement type="text" id="userAuthKey" label="plugins.generic.boriSharing.userAuthKey" required="true" value=$userAuthKey maxlength="32" size=$fbvStyles.size.MEDIUM}
+						{/fbvFormSection}
+					</div>
+                {/fbvFormSection}
+
 			    {fbvFormButtons id="boriPluginSettingsFormSubmit" submitText="common.save" hideCancel=true}
 			{else}
 				{translate key="plugins.generic.boriSharing.alreadyAcceptedTerms"}
