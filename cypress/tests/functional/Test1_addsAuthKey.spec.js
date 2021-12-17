@@ -11,7 +11,7 @@ function testAcceptPrivacyTermsWithoutAuth() {
 
 function testAcceptPrivacyTermsWithAuth() {
     cy.get('input[id^=userAuthKey]').click();
-    cy.get('input[id^=userAuthKey]').type( '7815696ecbf1c96e6894b779456d330e', { delay: 0 });
+    cy.get('input[id^=userAuthKey]').type( Cypress.env('UserKeyAuth'), { delay: 1 });
     cy.get('button[id^=submitFormButton]').contains('Save').click();
     cy.get('.app__notifications > :nth-child(1) > :nth-child(2)').contains('Plugin working').should('exist');
 }
@@ -19,7 +19,7 @@ function testAcceptPrivacyTermsWithAuth() {
 
 describe('BoriSharing Plugin auth key test', function() {
     it('Adds auth key tests', function() {
-        cy.visit(Cypress.env('baseUrl') + 'index.php/f/submissions');
+        cy.visit(Cypress.env('baseUrl') + 'index.php/h/submissions');
         cy.get('input[id=username]').click();
         cy.get('input[id=username]').type(Cypress.env('OJSAdminUsername'), { delay: 0 });
         cy.get('input[id=password]').click();
