@@ -38,8 +38,8 @@ class APIIntegrationTest extends PKPTestCase {
         $boriAPIClient = new BoriAPIClient($userAuthKey);
         $response = $boriAPIClient->sendSubmissionFiles($this->submissionFiles); 
 
-        $statusCodeExpected = 200;
-		$this->assertEquals($statusCodeExpected, $response->getStatusCode());
+        $messageExpected = 'The file(s) has been sent';
+		$this->assertEquals($messageExpected, $response);
     }
 
     public function testUseAuthKeyAndAuthFail(): void {

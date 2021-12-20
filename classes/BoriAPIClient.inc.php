@@ -24,14 +24,16 @@ class BoriAPIClient {
 		$headers = ['Authorization' => 'Basic ' . $this->credentialBase64];
 		
 		try {
-			$response = $client->request('POST', '', ['headers' => $headers,'multipart' => $multipart]);
+			$client->request('POST', '', ['headers' => $headers,'multipart' => $multipart]);
 		} catch (ClientException $e) {
 			$message = 'The files were not sent due to Authentication Failure';
 			error_log($message);
 			return $message;
 		}
 
-		return $response;
+		$message = 'The file(s) has been sent';
+		error_log($message);
+		return $message;
     }
 
     private function createMultipartToRequest($submissionFiles): array{
