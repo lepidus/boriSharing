@@ -53,4 +53,15 @@ class APIIntegrationTest extends PKPTestCase {
         $this->assertEquals($messageExpected, $response);
     }
 
+    public function testUseAuthKeyAndConnectionFail(): void {
+
+        $userAuthKey = '7815696ecbf1c96e6894b779456d330e';
+
+        $boriAPIClient = new BoriAPIClient($userAuthKey);
+        $response = $boriAPIClient->sendSubmissionFiles($this->submissionFiles); 
+    
+        $messageExpected = 'The files were not sent due to Connection Failure';
+        $this->assertEquals($messageExpected, $response);
+    }
+
 }

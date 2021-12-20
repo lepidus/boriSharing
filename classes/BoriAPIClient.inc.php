@@ -3,6 +3,7 @@
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Utils;
 use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\ConnectException;
 
 class BoriAPIClient {
 
@@ -27,6 +28,10 @@ class BoriAPIClient {
 			$client->request('POST', '', ['headers' => $headers,'multipart' => $multipart]);
 		} catch (ClientException $e) {
 			$message = 'The files were not sent due to Authentication Failure';
+			error_log($message);
+			return $message;
+		} catch (ConnectException $e) {
+			$message = 'The files were not sent due to Connection Failure';
 			error_log($message);
 			return $message;
 		}
