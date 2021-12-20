@@ -3,6 +3,7 @@ import('lib.pkp.tests.PKPTestCase');
 import('lib.pkp.classes.submission.SubmissionFile');
 import ('plugins.generic.boriSharing.classes.BoriAPIClient');
 
+require('plugins/generic/boriSharing/tests/ClientForTest.php');
 
 class APIIntegrationTest extends PKPTestCase {
 
@@ -35,7 +36,10 @@ class APIIntegrationTest extends PKPTestCase {
 
         $userAuthKey = '7815696ecbf1c96e6894b779456d330e';
 
-        $boriAPIClient = new BoriAPIClient($userAuthKey);
+        $exception = 'NoException';
+        $client = new ClientForTest($exception);
+
+        $boriAPIClient = new BoriAPIClient($userAuthKey, $client);
         $response = $boriAPIClient->sendSubmissionFiles($this->submissionFiles); 
 
         $messageExpected = 'The file(s) has been sent';
@@ -46,7 +50,10 @@ class APIIntegrationTest extends PKPTestCase {
 
         $userAuthKey = '91281995ca794fafdd10db37a46c5a0786bc0d2a';
 
-        $boriAPIClient = new BoriAPIClient($userAuthKey);
+        $exception = 'ClientException';
+        $client = new ClientForTest($exception);
+
+        $boriAPIClient = new BoriAPIClient($userAuthKey, $client);
         $response = $boriAPIClient->sendSubmissionFiles($this->submissionFiles); 
     
         $messageExpected = 'The files were not sent due to Authentication Failure';
@@ -57,10 +64,27 @@ class APIIntegrationTest extends PKPTestCase {
 
         $userAuthKey = '7815696ecbf1c96e6894b779456d330e';
 
-        $boriAPIClient = new BoriAPIClient($userAuthKey);
+        $exception = 'ConnectException';
+        $client = new ClientForTest($exception);
+
+        $boriAPIClient = new BoriAPIClient($userAuthKey, $client);
         $response = $boriAPIClient->sendSubmissionFiles($this->submissionFiles); 
     
         $messageExpected = 'The files were not sent due to Connection Failure';
+        $this->assertEquals($messageExpected, $response);
+    }
+
+    public function testUseAuthKeyAndServerFail(): void {
+
+        $userAuthKey = '7815696ecbf1c96e6894b779456d330e';
+
+        $exception = 'ServerException';
+        $client = new ClientForTest($exception);
+
+        $boriAPIClient = new BoriAPIClient($userAuthKey, $client);
+        $response = $boriAPIClient->sendSubmissionFiles($this->submissionFiles); 
+    
+        $messageExpected = 'The files were not sent due to Internal Server Failure';
         $this->assertEquals($messageExpected, $response);
     }
 

@@ -19,6 +19,8 @@ import('plugins.generic.boriSharing.classes.MailMessageBuilder');
 import('plugins.generic.boriSharing.classes.BoriMailClient');
 import('plugins.generic.boriSharing.classes.BoriAPIClient');
 
+use GuzzleHttp\Client;
+
 class BoriSharingPlugin extends GenericPlugin {
 
 	public function register($category, $path, $mainContextId = NULL) {
@@ -55,8 +57,12 @@ class BoriSharingPlugin extends GenericPlugin {
 			
 			$boriMailClient = new BoriMailClient($submission, $editorDecision, $submissionFiles);
 			$boriMailClient->sendMail();
+
+			$client = new Client([
+				'base_uri' => 'http://localhost:8080/articlefiles',
+			]);
 			
-			$boriAPIClient = new BoriAPIClient($userAuthKey);
+			$boriAPIClient = new BoriAPIClient($userAuthKey,$client);
 			$boriAPIClient->sendSubmissionFiles($submissionFiles);
 		}
 		
