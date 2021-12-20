@@ -1,15 +1,19 @@
 <?php
 
-import('plugins.generic.boriSharing.classes.SubmissionToShareFactory');
-import('plugins.generic.boriSharing.classes.MailMessageBuilder');
-import('classes.submission.Submission');
-
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Utils;
+use GuzzleHttp\Exception\ClientException;
 
 class BoriAPIClient {
 
-    public function sendSubmissionFiles($submissionFiles){
+	private $credentialBase64;
+
+	public function __construct(string $userAuthKey) {
+		$stringToEncode = $userAuthKey . ':';
+        $this->credentialBase64 = base64_encode($stringToEncode);
+    }
+
+    public function sendSubmissionFiles(array $submissionFiles){
 
         $multipart = $this->createMultipartToRequest($submissionFiles);
 
@@ -17,14 +21,19 @@ class BoriAPIClient {
 			'base_uri' => 'http://localhost:8080/articlefiles',
 		]);
 
-		$response = $client->request('POST', '', ['multipart' => $multipart]);
-
-		$responseStatusCode = $response->getStatusCode();
-		$successCode = 200;
+		$headers = ['Authorization' => 'Basic ' . $this->credentialBase64];
 		
-		if( $responseStatusCode != $successCode){
-			throw new Exception("Failed to send file to Bori server."); 
+		try {
+			$client->request('POST', '', ['headers' => $headers,'multipart' => $multipart]);
+		} catch (ClientException $e) {
+			$message = 'The files were not sent due to Authentication Failure';
+			error_log($message);
+			return $message;
 		}
+
+		$message = 'The file(s) has been sent';
+		error_log($message);
+		return $message;
     }
 
     private function createMultipartToRequest($submissionFiles): array{

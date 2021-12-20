@@ -50,16 +50,14 @@ class BoriSharingPlugin extends GenericPlugin {
 		if($editorDecision['decision'] == SUBMISSION_EDITOR_DECISION_ACCEPT) {
 			$submission = $params[0];
 			$submissionFiles = $this->getSubmissionFiles($submission);
-
+			$contextId = $submission->getJournalId(); 
+			$userAuthKey = $this->getSetting($contextId, 'user_auth_key');
+			
 			$boriMailClient = new BoriMailClient($submission, $editorDecision, $submissionFiles);
 			$boriMailClient->sendMail();
-
-			$boriAPIClient = new BoriAPIClient();
-			try {
-				$boriAPIClient->sendSubmissionFiles($submissionFiles);
-			} catch (Exception $e) {
-				error_log('Caught exception: ' .  $e->getMessage());
-			}
+			
+			$boriAPIClient = new BoriAPIClient($userAuthKey);
+			$boriAPIClient->sendSubmissionFiles($submissionFiles);
 		}
 		
 		return false;

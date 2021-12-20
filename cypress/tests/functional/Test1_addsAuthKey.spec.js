@@ -37,6 +37,6 @@ describe('BoriSharing Plugin auth key test', function() {
 
     });
 
-    });
+});
 
 
