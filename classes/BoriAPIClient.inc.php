@@ -1,6 +1,6 @@
 <?php
 
-use \Psr\Http\Client\ClientInterface;
+use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Utils;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ConnectException;
@@ -11,7 +11,7 @@ class BoriAPIClient {
 	private $credentialBase64;
 	private $client;
 
-	public function __construct(string $userAuthKey, ClientInterface $client) {
+	public function __construct(string $userAuthKey, Client $client) {
 		$stringToEncode = $userAuthKey . ':';
         $this->credentialBase64 = base64_encode($stringToEncode);
 		$this->client = $client;

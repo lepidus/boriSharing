@@ -1,7 +1,6 @@
 <?php
 
-use \Psr\Http\Client\ClientInterface;
-use Psr\Http\Message\RequestInterface;
+use GuzzleHttp\Client;
 use Psr\Http\Message\ResponseInterface;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\Request;
@@ -13,19 +12,11 @@ use GuzzleHttp\Exception\ClientException;
 
 require __DIR__ . '/../vendor/autoload.php';
 
-class ClientForTest implements ClientInterface {
+class ClientForTest extends Client {
     private $exception;
 
     public function __construct(string $exception){
         $this->exception = $exception;
-    }
-
-    public function sendRequest(RequestInterface $request): ResponseInterface{
-        $headers = $options['headers'] ?? [];
-        $body = $options['body'] ?? null;
-        $response = new Response($status = 200, $headers , $body , $version = '1.1');
-        
-        return $response;
     }
 
     public function request(string $method, $uri = '', array $options = []): ResponseInterface {
