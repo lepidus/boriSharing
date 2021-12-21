@@ -5,6 +5,10 @@ import ('plugins.generic.boriSharing.classes.BoriAPIClient');
 
 require('plugins/generic/boriSharing/tests/ClientForTest.php');
 
+use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\ConnectException;
+use GuzzleHttp\Exception\ServerException;
+
 class APIIntegrationTest extends PKPTestCase {
 
     protected const TESTS_DIRECTORY =  '..'. DIRECTORY_SEPARATOR .'plugins' . DIRECTORY_SEPARATOR . 'generic' . DIRECTORY_SEPARATOR . 'boriSharing' . DIRECTORY_SEPARATOR . 'tests' . DIRECTORY_SEPARATOR;    
@@ -41,9 +45,9 @@ class APIIntegrationTest extends PKPTestCase {
 
         $boriAPIClient = new BoriAPIClient($userAuthKey, $client);
         $response = $boriAPIClient->sendSubmissionFiles($this->submissionFiles); 
-
-        $messageExpected = 'The file(s) has been sent';
-		$this->assertEquals($messageExpected, $response);
+        
+        $this->assertEquals(200, $response->getStatusCode());
+		$this->assertEquals('OK', $response->getReasonPhrase());
     }
 
     public function testUseAuthKeyAndAuthFail(): void {
@@ -54,10 +58,14 @@ class APIIntegrationTest extends PKPTestCase {
         $client = new ClientForTest($exception);
 
         $boriAPIClient = new BoriAPIClient($userAuthKey, $client);
-        $response = $boriAPIClient->sendSubmissionFiles($this->submissionFiles); 
-    
-        $messageExpected = 'The files were not sent due to Authentication Failure';
-        $this->assertEquals($messageExpected, $response);
+        try {
+            $boriAPIClient->sendSubmissionFiles($this->submissionFiles); 
+            $this->fail();
+        } catch (ClientException $e) {
+            $message = $e->getMessage();
+            $messageExpected = 'Unauthorized';
+            $this->assertEquals($messageExpected, $message);
+        }
     }
 
     public function testUseAuthKeyAndConnectionFail(): void {
@@ -68,10 +76,15 @@ class APIIntegrationTest extends PKPTestCase {
         $client = new ClientForTest($exception);
 
         $boriAPIClient = new BoriAPIClient($userAuthKey, $client);
-        $response = $boriAPIClient->sendSubmissionFiles($this->submissionFiles); 
+        try {
+            $boriAPIClient->sendSubmissionFiles($this->submissionFiles); 
+            $this->fail();
+        } catch (ConnectException $e) {
+            $message = $e->getMessage();
+            $messageExpected = 'ConnectException';
+            $this->assertEquals($messageExpected, $message);
+        }
     
-        $messageExpected = 'The files were not sent due to Connection Failure';
-        $this->assertEquals($messageExpected, $response);
     }
 
     public function testUseAuthKeyAndServerFail(): void {
@@ -82,10 +95,14 @@ class APIIntegrationTest extends PKPTestCase {
         $client = new ClientForTest($exception);
 
         $boriAPIClient = new BoriAPIClient($userAuthKey, $client);
-        $response = $boriAPIClient->sendSubmissionFiles($this->submissionFiles); 
-    
-        $messageExpected = 'The files were not sent due to Internal Server Failure';
-        $this->assertEquals($messageExpected, $response);
+        try {
+            $boriAPIClient->sendSubmissionFiles($this->submissionFiles); 
+            $this->fail();
+        } catch (ServerException $e) {
+            $message = $e->getMessage();
+            $messageExpected = 'Internal Server Error';
+            $this->assertEquals($messageExpected, $message);
+        }
     }
 
 }

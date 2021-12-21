@@ -20,8 +20,6 @@ class ClientForTest extends Client {
     }
 
     public function request(string $method, $uri = '', array $options = []): ResponseInterface {
-        
-        $message = $this->exception;
 
         $headers = $options['headers'] ?? [];
         $body = $options['body'] ?? null;
@@ -31,13 +29,16 @@ class ClientForTest extends Client {
         switch ($this->exception) {
             case 'ServerException':
                 $response = new Response($status = 500, $headers , $body , $version = '1.1');
+                $message = $response->getReasonPhrase();
                 throw new ServerException( $message, $request, $response);
                 break;
             case 'ConnectException':
+                $message = $this->exception;
                 throw new ConnectException( $message, $request);
                 break;
             case 'ClientException':
                 $response = new Response($status = 401, $headers , $body , $version = '1.1');
+                $message = $response->getReasonPhrase();
                 throw new ClientException( $message, $request,$response);
                 break;
         }
