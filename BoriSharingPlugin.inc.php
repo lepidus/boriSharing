@@ -19,6 +19,13 @@ import('plugins.generic.boriSharing.classes.MailMessageBuilder');
 import('plugins.generic.boriSharing.classes.BoriMailClient');
 import('plugins.generic.boriSharing.classes.BoriAPIClient');
 
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\ConnectException;
+use GuzzleHttp\Exception\ServerException;
+
+define('BASE_URI', 'http://localhost:8080/articlefiles');
+
 class BoriSharingPlugin extends GenericPlugin {
 
 	public function register($category, $path, $mainContextId = NULL) {
@@ -51,13 +58,28 @@ class BoriSharingPlugin extends GenericPlugin {
 			$submission = $params[0];
 			$submissionFiles = $this->getSubmissionFiles($submission);
 			$contextId = $submission->getJournalId(); 
-			$userAuthKey = $this->getSetting($contextId, 'user_auth_key');
 			
 			$boriMailClient = new BoriMailClient($submission, $editorDecision, $submissionFiles);
 			$boriMailClient->sendMail();
+
+			$userAuthKey = $this->getSetting($contextId, 'user_auth_key');
+			$client = new Client(['base_uri' => BASE_URI]);
 			
-			$boriAPIClient = new BoriAPIClient($userAuthKey);
-			$boriAPIClient->sendSubmissionFiles($submissionFiles);
+			$boriAPIClient = new BoriAPIClient($userAuthKey,$client);
+			try {
+				$boriAPIClient->sendSubmissionFiles($submissionFiles);
+				$message = 'The file(s) has been sent';
+				error_log($message);
+			} catch (ClientException $e) {
+				$message = $e->getResponse()->getReasonPhrase();
+				error_log($message);
+			} catch (ConnectException $e) {
+				$message = $e->getMessage();
+				error_log($message);
+			} catch (ServerException $e){
+				$message = $e->getResponse()->getReasonPhrase();
+				error_log($message);
+			}
 		}
 		
 		return false;
