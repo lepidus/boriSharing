@@ -21,7 +21,7 @@
 				{fbvFormSection title="plugins.generic.boriSharing.authKey"}
                     <div>			
 						{fbvFormSection }
-							{fbvElement type="text" id="userAuthKey" label="plugins.generic.boriSharing.userAuthKey" required="true" value=$userAuthKey maxlength="32" size=$fbvStyles.size.MEDIUM}
+							{fbvElement type="text" id="userAuthKey" label="plugins.generic.boriSharing.userAuthKey" required="true" value=$userAuthKey maxlength="256" size=$fbvStyles.size.MEDIUM}
 						{/fbvFormSection}
 					</div>
                 {/fbvFormSection}
