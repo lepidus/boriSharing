@@ -24,7 +24,7 @@ use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\ServerException;
 
-define('BASE_URI', 'http://localhost:8080/articlefiles');
+define('BASE_URI', 'https://www.abori.com.br/uploads-ojs');
 
 class BoriSharingPlugin extends GenericPlugin {
 
