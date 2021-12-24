@@ -22,7 +22,7 @@ Para baixar este plugin, vá para a [Página de versões](https://github.com/lep
 
 Após a instalação, é necessário habilitar o plugin. Isso é feito em `Configurações do Website` > `Plugins` > `Plugins instalados`.
 
-Com o plugin habilitado, deve-se expandir as suas opções clicando na seta ao lado do seu nome e então, acessar as suas `Configurações`. Na janela que abrir, estarão exibidos os _Termos de Privacidade_ do plugin. Após a leitura, você pode os aceitar e confirmar a ação clicando em `Salvar`. O plugin só entrará em funcionamento mediante a aceitação dos Termos de Privacidade.
+Com o plugin habilitado, deve-se expandir as suas opções clicando na seta ao lado do seu nome e então, acessar as suas `Configurações`. Na janela que abrir, estarão exibidos os _Termos de Privacidade_ e a _Chave de Autenticação_ do plugin. Após a leitura, você pode aceitar os termos, preencher o campo com a chave e confirmar a ação clicando em `Salvar`. O plugin só entrará em funcionamento mediante a aceitação dos Termos de Privacidade e o preenchimento da Chave de Autenticação.
 
 Após aceitar os Termos de Privacidade, será enviado um e-mail para a Agência Bori, informando da ativação do plugin no seu website. A partir de então, sempre que um artigo for aceito no estágio de _Avaliação_, um e-mail com os dados desse será enviado à agência. O mesmo ocorrerá quando o artigo for publicado.
 
