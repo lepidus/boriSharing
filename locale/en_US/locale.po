@@ -49,6 +49,9 @@ msgstr "Terms accepted successfully"
 msgid "plugins.generic.boriSharing.working"
 msgstr "Plugin working"
 
+msgid "plugins.generic.boriSharing.disabledAPI"
+msgstr "Disabled API"
+
 msgid "plugins.generic.boriSharing.alreadyAcceptedTerms"
 msgstr "Privacy terms have been previously accepted"
 
@@ -58,5 +61,8 @@ msgstr "Authentication Key"
 msgid "plugins.generic.boriSharing.userAuthKey"
 msgstr "Key"
 
-msgid "plugins.generic.boriSharing.passwordAuthKey"
-msgstr "Password"
+msgid "plugins.generic.boriSharing.API"
+msgstr "Bori API"
+
+msgid "plugins.generic.boriSharing.disableAPI"
+msgstr "Disable API"

@@ -26,6 +26,13 @@
 					</div>
                 {/fbvFormSection}
 
+				{fbvFormSection title="plugins.generic.boriSharing.API"}
+                    <div>			
+						<input type="checkbox" name="disableAPI" id="disableAPI" value="true"/>
+						{translate key="plugins.generic.boriSharing.disableAPI"}
+					</div>
+                {/fbvFormSection}
+
 			    {fbvFormButtons id="boriPluginSettingsFormSubmit" submitText="common.save" hideCancel=true}
 			{else}
 				{translate key="plugins.generic.boriSharing.alreadyAcceptedTerms"}
