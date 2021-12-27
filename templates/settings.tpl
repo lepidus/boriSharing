@@ -13,7 +13,7 @@
                 {fbvFormSection title="plugins.generic.boriSharing.privacyTerms" }
                     <div style="text-align: justify;">{translate key="plugins.generic.boriSharing.term"}</div>
                     <label>
-						<input type="checkbox" name="termsAccepted" id="termsCheckbox" value="1"/>
+						<input type="checkbox" name="termsAccepted" id="termsCheckbox" required="true" value="1"/>
 						{translate key="plugins.generic.boriSharing.acceptTerms"}
 					</label>
                 {/fbvFormSection}

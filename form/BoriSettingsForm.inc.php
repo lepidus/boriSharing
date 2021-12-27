@@ -46,13 +46,7 @@ class BoriSettingsForm extends Form {
 		if (!parent::validate($callHooks)) return false;
 
 		$termsAccepted = $this->getData('termsAccepted');
-		if (empty($termsAccepted)) {
-			return $termsAccepted;
-        } else{
-			$disableAPI = $this->getData('disableAPI');
-            return $disableAPI;
-        }
-		
+		return $termsAccepted;
 	}
 
 	public function execute(...$functionArgs) {
