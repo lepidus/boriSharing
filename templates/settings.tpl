@@ -13,7 +13,7 @@
                 {fbvFormSection title="plugins.generic.boriSharing.privacyTerms" }
                     <div style="text-align: justify;">{translate key="plugins.generic.boriSharing.term"}</div>
                     <label>
-						<input type="checkbox" name="termsAccepted" id="termsCheckbox" value="1"/>
+						<input type="checkbox" name="termsAccepted" id="termsCheckbox" required="true" value="1"/>
 						{translate key="plugins.generic.boriSharing.acceptTerms"}
 					</label>
                 {/fbvFormSection}
@@ -26,9 +26,19 @@
 					</div>
                 {/fbvFormSection}
 
-			    {fbvFormButtons id="boriPluginSettingsFormSubmit" submitText="common.save" hideCancel=true}
+				{fbvFormSection list="true" title="plugins.generic.boriSharing.API"}
+					{fbvElement type="checkbox" id="disableAPI" label="plugins.generic.boriSharing.disableAPI" value="true" checked=$disableAPI|compare:true}
+                {/fbvFormSection}
+
+				{fbvFormButtons id="boriPluginSettingsFormSubmit" submitText="common.save" hideCancel=true}
 			{else}
 				{translate key="plugins.generic.boriSharing.alreadyAcceptedTerms"}
+
+				{fbvFormSection list="true" title="plugins.generic.boriSharing.API"}
+					{fbvElement type="checkbox" id="disableAPI" label="plugins.generic.boriSharing.disableAPI" value="true" checked=$disableAPI|compare:true}
+                {/fbvFormSection}
+
+				{fbvFormButtons id="boriPluginSettingsFormSubmit" submitText="common.save" hideCancel=true}
 			{/if}
 		{/fbvFormArea}
 	</form>

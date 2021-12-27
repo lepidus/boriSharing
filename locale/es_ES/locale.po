@@ -49,6 +49,12 @@ msgstr "Términos aceptados con éxito"
 msgid "plugins.generic.boriSharing.working"
 msgstr "Plugin funcionando"
 
+msgid "plugins.generic.boriSharing.disabledAPI"
+msgstr "API Deshabilitada"
+
+msgid "plugins.generic.boriSharing.enabledAPI"
+msgstr "API habilitada"
+
 msgid "plugins.generic.boriSharing.alreadyAcceptedTerms"
 msgstr "Los términos de privacidad han sido aceptados previamente"
 
@@ -58,5 +64,8 @@ msgstr "Clave de Autenticación"
 msgid "plugins.generic.boriSharing.userAuthKey"
 msgstr "Clave"
 
-msgid "plugins.generic.boriSharing.passwordAuthKey"
-msgstr "Contraseña"
+msgid "plugins.generic.boriSharing.API"
+msgstr "API de Bori"
+
+msgid "plugins.generic.boriSharing.disableAPI"
+msgstr "Deshabilitar API"
