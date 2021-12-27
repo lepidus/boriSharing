@@ -52,6 +52,9 @@ msgstr "Plugin em funcionamento"
 msgid "plugins.generic.boriSharing.disabledAPI"
 msgstr "API desativada"
 
+msgid "plugins.generic.boriSharing.enabledAPI"
+msgstr "API ativada"
+
 msgid "plugins.generic.boriSharing.alreadyAcceptedTerms"
 msgstr "Os termos de privacidade já foram aceitos anteriormente"
 

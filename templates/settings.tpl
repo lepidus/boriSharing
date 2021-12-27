@@ -26,16 +26,19 @@
 					</div>
                 {/fbvFormSection}
 
-				{fbvFormSection title="plugins.generic.boriSharing.API"}
-                    <div>			
-						<input type="checkbox" name="disableAPI" id="disableAPI" value="true"/>
-						{translate key="plugins.generic.boriSharing.disableAPI"}
-					</div>
+				{fbvFormSection list="true" title="plugins.generic.boriSharing.API"}
+					{fbvElement type="checkbox" id="disableAPI" label="plugins.generic.boriSharing.disableAPI" value="true" checked=$disableAPI|compare:true}
                 {/fbvFormSection}
 
-			    {fbvFormButtons id="boriPluginSettingsFormSubmit" submitText="common.save" hideCancel=true}
+				{fbvFormButtons id="boriPluginSettingsFormSubmit" submitText="common.save" hideCancel=true}
 			{else}
 				{translate key="plugins.generic.boriSharing.alreadyAcceptedTerms"}
+
+				{fbvFormSection list="true" title="plugins.generic.boriSharing.API"}
+					{fbvElement type="checkbox" id="disableAPI" label="plugins.generic.boriSharing.disableAPI" value="true" checked=$disableAPI|compare:true}
+                {/fbvFormSection}
+
+				{fbvFormButtons id="boriPluginSettingsFormSubmit" submitText="common.save" hideCancel=true}
 			{/if}
 		{/fbvFormArea}
 	</form>

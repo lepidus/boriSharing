@@ -33,22 +33,39 @@ class BoriSettingsForm extends Form {
 	}
 
 	function readInputData() {
-		$this->readUserVars(['termsAccepted', 'userAuthKey', 'disableAPI']);
+		$termsAccepted = $this->_plugin->getSetting($this->_contextId, 'terms_accepted');
+
+        if (empty($termsAccepted)) {
+            $this->readUserVars(['termsAccepted', 'userAuthKey', 'disableAPI']);
+        } else{
+			$this->readUserVars(['disableAPI']);
+		}
 	}
 
 	public function validate($callHooks = true) {
 		if (!parent::validate($callHooks)) return false;
 
 		$termsAccepted = $this->getData('termsAccepted');
-		return $termsAccepted;
+		if (empty($termsAccepted)) {
+			return $termsAccepted;
+        } else{
+			$disableAPI = $this->getData('disableAPI');
+            return $disableAPI;
+        }
+		
 	}
 
 	public function execute(...$functionArgs) {
 		parent::execute(...$functionArgs);
 
-		$this->_plugin->updateSetting($this->_contextId, 'terms_accepted', $this->getData('termsAccepted'));
-		$this->_plugin->updateSetting($this->_contextId, 'user_auth_key', $this->getData('userAuthKey')); 
-		$this->_plugin->updateSetting($this->_contextId, 'disable_API', $this->getData('disableAPI'));	
+		$termsAccepted = $this->_plugin->getSetting($this->_contextId, 'terms_accepted');
+		if (empty($termsAccepted)){
+			$this->_plugin->updateSetting($this->_contextId, 'terms_accepted', $this->getData('termsAccepted'));
+			$this->_plugin->updateSetting($this->_contextId, 'user_auth_key', $this->getData('userAuthKey'));
+			$this->_plugin->updateSetting($this->_contextId, 'disable_API', $this->getData('disableAPI'));
+		} else{
+			$this->_plugin->updateSetting($this->_contextId, 'disable_API', $this->getData('disableAPI'));
+		}
 	
 		$pluginSettingsDao = DAORegistry::getDAO('PluginSettingsDAO');
 		$pluginSettingsDao->installSettings($this->_contextId, $this->_plugin->getName(), $this->_plugin->getContextSpecificPluginSettingsFile());

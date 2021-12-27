@@ -154,6 +154,16 @@ class BoriSharingPlugin extends GenericPlugin {
 		return $actions;
 	}
 
+	private function notifyAboutAPIWorking($disableAPI, $notificationMgr,$currentUser) {
+		if ($disableAPI){
+			$notificationAboutDisabledAPI = __('plugins.generic.boriSharing.disabledAPI');
+			$notificationMgr->createTrivialNotification($currentUser->getId(), NOTIFICATION_TYPE_SUCCESS, array('contents' => $notificationAboutDisabledAPI));
+		} else {
+			$notificationAboutEnabledAPI = __('plugins.generic.boriSharing.enabledAPI');
+			$notificationMgr->createTrivialNotification($currentUser->getId(), NOTIFICATION_TYPE_SUCCESS, array('contents' => $notificationAboutEnabledAPI));
+		}
+	}
+
 	public function manage($args, $request) {
 		$journal = $request->getJournal();
 
@@ -166,29 +176,30 @@ class BoriSharingPlugin extends GenericPlugin {
 
 				if ($request->getUserVar('save')) {
 					$form->readInputData();
-					
+
+					$currentUser = $request->getUser();
+					$notificationMgr = new NotificationManager();
+
 					if ($form->validate()) {
 						$form->execute();
 
 						$notificationAboutTerms = __('plugins.generic.boriSharing.termsAcceptedSuccessfully');
-						$notificationAboutWorking = __('plugins.generic.boriSharing.working');
-						
-						$currentUser = $request->getUser();
-						$notificationMgr = new NotificationManager();
 						$notificationMgr->createTrivialNotification($currentUser->getId(), NOTIFICATION_TYPE_SUCCESS, array('contents' => $notificationAboutTerms));
-
+						
 						$disableAPI = $this->getSetting($context->getId(), 'disable_API');
-						if ($disableAPI){
-							$notificationAboutAPI = __('plugins.generic.boriSharing.disabledAPI');
-							$notificationMgr->createTrivialNotification($currentUser->getId(), NOTIFICATION_TYPE_SUCCESS, array('contents' => $notificationAboutAPI));
-						}
-
+						$this->notifyAboutAPIWorking($disableAPI, $notificationMgr, $currentUser);
+						
+						$notificationAboutWorking = __('plugins.generic.boriSharing.working');
 						$notificationMgr->createTrivialNotification($currentUser->getId(), NOTIFICATION_TYPE_SUCCESS, array('contents' => $notificationAboutWorking));
 
 						$this->notifyThatPluginIsWorking($request, $context);
+					} else {
+						$form->execute();
 
-						return new JSONMessage(true);
+						$disableAPI = $this->getSetting($context->getId(), 'disable_API');
+						$this->notifyAboutAPIWorking($disableAPI, $notificationMgr, $currentUser);
 					}
+					return new JSONMessage(true);
 				}
 
 				return new JSONMessage(true, $form->fetch($request));
