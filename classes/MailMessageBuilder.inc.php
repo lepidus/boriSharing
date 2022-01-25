@@ -3,15 +3,13 @@ import ('plugins.generic.boriSharing.classes.SubmissionToShare');
 import ('plugins.generic.boriSharing.classes.MailMessage');
 import ('plugins.generic.boriSharing.classes.Person');
 
-define('AGENCY_EMAIL', "bori@abori.com.br");
-
 class MailMessageBuilder {
 
     private $mailMessage;
 
-    public function __construct() {
+    public function __construct($agencyEmail) {
         $this->mailMessage = new MailMessage();
-        $this->mailMessage->setRecipient(new Person("", AGENCY_EMAIL));
+        $this->mailMessage->setRecipient(new Person("", $agencyEmail));
     }
 
     public function buildEmailSender(string $senderName, string $senderEmail) {

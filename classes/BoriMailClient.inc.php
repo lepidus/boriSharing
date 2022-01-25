@@ -6,11 +6,13 @@ import('classes.submission.Submission');
 
 class BoriMailClient {
 
+    private $plugin;
     private $submission;
     private $editorDecision;
     private $submissionFiles;
 
-    public function __construct(Submission $submission, array $editorDecision, array $submissionFiles) {
+    public function __construct($plugin, Submission $submission, array $editorDecision, array $submissionFiles) {
+        $this->plugin = $plugin;
         $this->submission = $submission;
         $this->editorDecision = $editorDecision;
         $this->submissionFiles = $submissionFiles;
@@ -23,9 +25,11 @@ class BoriMailClient {
 		$editor = DAORegistry::getDAO('UserDAO')->getById($this->editorDecision['editorId']);
 		$dateAccepted = $this->editorDecision['dateDecided'];
         
+        $agencyEmail = $this->plugin->getSetting(CONTEXT_SITE, 'agency_email');
+
 		$submissionToShare = $submissionToShareFactory->createAcceptedSubmission($journal, $this->submission, $editor, $dateAccepted, $this->submissionFiles);
 		
-		$mailMessageBuilder = new MailMessageBuilder();
+		$mailMessageBuilder = new MailMessageBuilder($agencyEmail);
 		$mailMessageBuilder->buildEmailSender($journal->getLocalizedData('acronym'), $journal->getData('contactEmail'));
 		$mailMessageBuilder->buildSubmissionAcceptedEmailSubject($submissionToShare);
 		$mailMessageBuilder->buildSubmissionAcceptedEmailBody($submissionToShare);

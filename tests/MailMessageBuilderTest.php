@@ -20,6 +20,7 @@ class MailMessageBuilderTest extends TestCase {
     private $authors;
     private $documents;
 
+    private $agencyEmail = "teste@lepidus.com.br";
     private $journalPrimaryContact = "contato.rbfg@emnuvens.com.br";
     private $datePluginStartedWorking = "25/12/2021";
     private $journalName = "Revista Brasileira de Formas Geométricas";
@@ -28,7 +29,7 @@ class MailMessageBuilderTest extends TestCase {
 
     public function setUp(): void {
         $this->createSubmissionToShare();
-        $this->mailMessageBuilder = new MailMessageBuilder();
+        $this->mailMessageBuilder = new MailMessageBuilder($this->agencyEmail);
     }
 
     private function createSubmissionToShare() {
