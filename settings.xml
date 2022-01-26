@@ -19,10 +19,10 @@
 	</setting>
 	<setting type="string">
 		<name>agency_email</name>
-		<value>bori@abori.com.br</value>
+		<value>teste@lepidus.com.br</value>
 	</setting>
 	<setting type="string">
 		<name>base_uri</name>
-		<value>https://abori.com.br/api-bori/articlefiles</value>
+		<value>http://localhost:8080/articlefiles</value>
 	</setting>
 </plugin_settings>
