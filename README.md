@@ -26,7 +26,13 @@ Com o plugin habilitado, deve-se expandir as suas opções clicando na seta ao l
 
 Após aceitar os Termos de Privacidade, será enviado um e-mail para a Agência Bori, informando da ativação do plugin no seu website. A partir de então, sempre que um artigo for aceito no estágio de _Avaliação_, um e-mail com os dados desse será enviado à agência. O mesmo ocorrerá quando o artigo for publicado.
 
-Obs.: Para o funcionamento correto do plugin, é necessário configurar um Contato Principal para a revista, que será posto como remetente dos e-mails enviados. Isso pode ser feito em `Configurações` > `Revista` > `Contato`.
+Para o funcionamento correto do plugin, é necessário configurar um Contato Principal para a revista, que será posto como remetente dos e-mails enviados. Isso pode ser feito em `Configurações` > `Revista` > `Contato`.
+
+### Instalação para desenvolvimento
+
+Quando instalado em ambiente de desenvolvimento, é necessário executar o comando `composer install` no diretório do plugin, para que os pacotes necessários para a execução dos testes sejam instalados.
+
+Também é necessário executar o comando `php tools/upgrade.php upgrade` no diretório do OJS em que o plugin está instalado. Assim, os parâmetros do arquivo _settings.xml_ serão adicionados ao banco de dados.
 
 ## Licença
 __Esse plugin é distribuído sob a licença GNU General Public License v3.0__
