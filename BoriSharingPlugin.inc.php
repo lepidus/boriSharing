@@ -24,8 +24,6 @@ use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\ServerException;
 
-define('BASE_URI', 'https://abori.com.br/api-bori/articlefiles');
-
 class BoriSharingPlugin extends GenericPlugin {
 
 	public function register($category, $path, $mainContextId = NULL) {
@@ -35,7 +33,7 @@ class BoriSharingPlugin extends GenericPlugin {
 		if ($success && $this->getEnabled($mainContextId)) {
 			$contextId = Application::get()->getRequest()->getContext()->getId();
 			$termsAccepted = $this->getSetting($contextId, 'terms_accepted');
-			
+
 			if(!empty($termsAccepted)) {
 				HookRegistry::register('EditorAction::recordDecision', [$this, 'shareWhenArticleApproved']);
 				HookRegistry::register('Publication::publish', array($this, 'shareWhenArticlePublished'));
@@ -52,6 +50,14 @@ class BoriSharingPlugin extends GenericPlugin {
 		return __('plugins.generic.boriSharing.description');
 	}
 
+	function getContextSpecificPluginSettingsFile() {
+		return $this->getPluginPath() . DIRECTORY_SEPARATOR . 'settings.xml';
+	}
+
+	function getInstallSitePluginSettingsFile() {
+		return $this->getPluginPath() . DIRECTORY_SEPARATOR . 'settings.xml';
+	}
+
 	public function shareWhenArticleApproved($hookName, $params) {
 		$editorDecision = $params[1];
 		if($editorDecision['decision'] == SUBMISSION_EDITOR_DECISION_ACCEPT) {
@@ -59,13 +65,14 @@ class BoriSharingPlugin extends GenericPlugin {
 			$submissionFiles = $this->getSubmissionFiles($submission);
 			$contextId = $submission->getJournalId(); 
 			
-			$boriMailClient = new BoriMailClient($submission, $editorDecision, $submissionFiles);
+			$boriMailClient = new BoriMailClient($this, $submission, $editorDecision, $submissionFiles);
 			$boriMailClient->sendMail();
 			
 			$disableAPI = $this->getSetting($contextId, 'disable_API');
 			if (!$disableAPI){
 				$userAuthKey = $this->getSetting($contextId, 'user_auth_key');
-				$client = new Client(['base_uri' => BASE_URI]);
+				$baseUri = $this->getSetting(CONTEXT_SITE, 'base_uri');
+				$client = new Client(['base_uri' => $baseUri]);
 				
 				$boriAPIClient = new BoriAPIClient($userAuthKey,$client);
 				try {
@@ -107,10 +114,11 @@ class BoriSharingPlugin extends GenericPlugin {
 		$journal = DAORegistry::getDAO('JournalDAO')->getById($submission->getData('contextId'));
 		$datePublished = $publication->getData('datePublished');
 		$editor = Application::get()->getRequest()->getUser();
+		$agencyEmail = $this->getSetting(CONTEXT_SITE, 'agency_email');
 		
 		$submissionToShare = $submissionToShareFactory->createPublishedSubmission($journal, $submission, $editor, $datePublished);
 
-		$mailMessageBuilder = new MailMessageBuilder();
+		$mailMessageBuilder = new MailMessageBuilder($agencyEmail);
 		$mailMessageBuilder->buildEmailSender($journal->getLocalizedData('acronym'), $journal->getData('contactEmail'));
 		$mailMessageBuilder->buildSubmissionPublishedEmailSubject($submissionToShare);
 		$mailMessageBuilder->buildSubmissionPublishedEmailBody($submissionToShare);
@@ -214,8 +222,9 @@ class BoriSharingPlugin extends GenericPlugin {
 		$journalName = $context->getLocalizedName();
 		$journalURL = $request->getBaseUrl() . '/index.php/' . $context->getData('urlPath');
 		$dateStartedWorking = date('d/m/Y', time());
+		$agencyEmail = $this->getSetting(CONTEXT_SITE, 'agency_email');
 
-		$mailMessageBuilder = new MailMessageBuilder();
+		$mailMessageBuilder = new MailMessageBuilder($agencyEmail);
 		$mailMessageBuilder->buildEmailSender($journalInitials, $context->getData('contactEmail'));
 		$mailMessageBuilder->buildPluginWorkingEmailSubject($journalInitials);
 		$mailMessageBuilder->buildPluginWorkingEmailBody($dateStartedWorking, $journalName, $journalURL);
