@@ -27,6 +27,10 @@ jobs:
           current_date=$(date +'%Y-%m-%d')
           if [ $date_version != $current_date ]; then exit 1; fi
         shell: bash
+      - name: Replace the settings file
+        run: |
+          mv settings_production.xml settings.xml
+        shell: bash
       - name: Create the tar.gz package
         run: |
           mkdir $PLUGIN_NAME

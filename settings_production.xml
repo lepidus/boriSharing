@@ -8,7 +8,7 @@
   * Developed by Lepidus Tecnologia
   * Distributed under the GNU GPL v3. For full terms see LICENSE or https://www.gnu.org/licenses/gpl-3.0.txt
   *
-  * Default plugin settings for use during development.
+  * Default plugin settings for use in production.
   *
     -->
 
@@ -19,10 +19,10 @@
 	</setting>
 	<setting type="string">
 		<name>agency_email</name>
-		<value>teste@lepidus.com.br</value>
+		<value>bori@abori.com.br</value>
 	</setting>
 	<setting type="string">
 		<name>base_uri</name>
-		<value>http://localhost:8080/articlefiles</value>
+		<value>https://abori.com.br/api-bori/articlefiles</value>
 	</setting>
 </plugin_settings>
