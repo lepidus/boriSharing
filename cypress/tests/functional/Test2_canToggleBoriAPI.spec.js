@@ -16,8 +16,8 @@ function testEnableAPI(){
     cy.get('.pkpNotification').contains('Enabled API').should('exist');
 }
 
-describe('BoriSharing Plugin auth key test', function() {
-    it('Adds API toggle tests: start disable', function() {
+describe('BoriSharing Plugin enable/disable API test', function() {
+    it('API toggle tests', function() {
         cy.visit(Cypress.env('baseUrl') + 'index.php/h/management/settings/website');
         cy.get('input[id=username]').click();
         cy.get('input[id=username]').type(Cypress.env('OJSAdminUsername'), { delay: 0 });
