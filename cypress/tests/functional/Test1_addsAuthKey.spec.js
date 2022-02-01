@@ -19,7 +19,7 @@ function testAcceptPrivacyTermsWithAuth() {
 
 describe('BoriSharing Plugin auth key test', function() {
     it('Adds auth key tests', function() {
-        cy.visit(Cypress.env('baseUrl') + 'index.php/anphlac/management/settings/website');
+        cy.visit(Cypress.env('baseUrl') + 'index.php/h/management/settings/website');
         cy.get('input[id=username]').click();
         cy.get('input[id=username]').type(Cypress.env('OJSAdminUsername'), { delay: 0 });
         cy.get('input[id=password]').click();
