@@ -17,29 +17,23 @@
 						{translate key="plugins.generic.boriSharing.acceptTerms"}
 					</label>
                 {/fbvFormSection}
-
-				{fbvFormSection title="plugins.generic.boriSharing.authKey"}
-                    <div>			
-						{fbvFormSection }
-							{fbvElement type="text" id="userAuthKey" label="plugins.generic.boriSharing.userAuthKey" required="true" value=$userAuthKey maxlength="256" size=$fbvStyles.size.MEDIUM}
-						{/fbvFormSection}
-					</div>
-                {/fbvFormSection}
-
-				{fbvFormSection list="true" title="plugins.generic.boriSharing.API"}
-					{fbvElement type="checkbox" id="disableAPI" label="plugins.generic.boriSharing.disableAPI" value="true" checked=$disableAPI|compare:true}
-                {/fbvFormSection}
-
-				{fbvFormButtons id="boriPluginSettingsFormSubmit" submitText="common.save" hideCancel=true}
 			{else}
 				{translate key="plugins.generic.boriSharing.alreadyAcceptedTerms"}
-
-				{fbvFormSection list="true" title="plugins.generic.boriSharing.API"}
-					{fbvElement type="checkbox" id="disableAPI" label="plugins.generic.boriSharing.disableAPI" value="true" checked=$disableAPI|compare:true}
-                {/fbvFormSection}
-
-				{fbvFormButtons id="boriPluginSettingsFormSubmit" submitText="common.save" hideCancel=true}
 			{/if}
+			
+			{fbvFormSection title="plugins.generic.boriSharing.authKey"}
+				<div>			
+					{fbvFormSection }
+						{fbvElement type="text" id="userAuthKey" label="plugins.generic.boriSharing.userAuthKey" password="true" required="true" value=$userAuthKey maxlength="256" size=$fbvStyles.size.MEDIUM}
+					{/fbvFormSection}
+				</div>
+			{/fbvFormSection}
+
+			{fbvFormSection list="true" title="plugins.generic.boriSharing.API"}
+				{fbvElement type="checkbox" id="disableAPI" label="plugins.generic.boriSharing.disableAPI" value="true" checked=$disableAPI|compare:true}
+			{/fbvFormSection}
+
+			{fbvFormButtons id="boriPluginSettingsFormSubmit" submitText="common.save" hideCancel=true}
 		{/fbvFormArea}
 	</form>
 </div>

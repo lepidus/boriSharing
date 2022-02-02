@@ -55,6 +55,9 @@ msgstr "API Deshabilitada"
 msgid "plugins.generic.boriSharing.enabledAPI"
 msgstr "API habilitada"
 
+msgid "plugins.generic.boriSharing.authKeyNotification"
+msgstr "Clave de Autenticación agregada/editada"
+
 msgid "plugins.generic.boriSharing.alreadyAcceptedTerms"
 msgstr "Los términos de privacidad han sido aceptados previamente"
 

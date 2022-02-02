@@ -1,24 +1,17 @@
 
-function testExistTextBoxToAuth() {
+function testExistsAuthKeyInput() {
     cy.get('input[id^=userAuthKey]').should('exist');
 }
 
-function testAcceptPrivacyTermsWithoutAuth() {
-    cy.get('#termsCheckbox').check();
-    cy.get('button[id^=submitFormButton]').contains('Save').click();
-    cy.get('.pkp_helpers_half > .error').contains('This field is required.').should('exist');
-}
-
-function testAcceptPrivacyTermsWithAuth() {
+function testEditAuthKey() {
     cy.get('input[id^=userAuthKey]').click();
     cy.get('input[id^=userAuthKey]').type( Cypress.env('UserAuthKey'), { delay: 1 });
     cy.get('button[id^=submitFormButton]').contains('Save').click();
-    cy.get('.pkpNotification').contains('Plugin working').should('exist');
+    cy.get('.pkpNotification').contains('Authentication key added/edited').should('exist');
 }
 
-
-describe('BoriSharing Plugin adding auth key test', function() {
-    it('Adds auth key tests', function() {
+describe('BoriSharing Plugin edit auth key', function() {
+    it('Auth key editing tests', function() {
         cy.visit(Cypress.env('baseUrl') + 'index.php/h/management/settings/website');
         cy.get('input[id=username]').click();
         cy.get('input[id=username]').type(Cypress.env('OJSAdminUsername'), { delay: 0 });
@@ -27,15 +20,12 @@ describe('BoriSharing Plugin adding auth key test', function() {
         cy.get('button[class=submit]').click();
 
         cy.get('#plugins-button').click();
-        cy.get('#component-grid-settings-plugins-settingsplugingrid-category-generic-row-borisharingplugin > .first_column > .show_extras').click();
+        cy.get('#component-grid-settings-plugins-settingsplugingrid-category-generic-row-borisharingplugin > .first_column > .show_extras').click();        
         cy.get('a[id^=component-grid-settings-plugins-settingsplugingrid-category-generic-row-borisharingplugin-settings-button]').click();
 
-        testExistTextBoxToAuth();
-        testAcceptPrivacyTermsWithoutAuth();
-        testAcceptPrivacyTermsWithAuth();
+        testExistsAuthKeyInput();
+        testEditAuthKey();
 
     });
 
 });
-
-

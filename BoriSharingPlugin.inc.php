@@ -162,7 +162,7 @@ class BoriSharingPlugin extends GenericPlugin {
 		return $actions;
 	}
 
-	private function notifyAboutAPIWorking($disableAPI, $notificationMgr,$currentUser) {
+	private function notifyUserAboutAPIStatus($disableAPI, $notificationMgr,$currentUser) {
 		if ($disableAPI){
 			$notificationAboutDisabledAPI = __('plugins.generic.boriSharing.disabledAPI');
 			$notificationMgr->createTrivialNotification($currentUser->getId(), NOTIFICATION_TYPE_SUCCESS, array('contents' => $notificationAboutDisabledAPI));
@@ -194,19 +194,20 @@ class BoriSharingPlugin extends GenericPlugin {
 						$notificationAboutTerms = __('plugins.generic.boriSharing.termsAcceptedSuccessfully');
 						$notificationMgr->createTrivialNotification($currentUser->getId(), NOTIFICATION_TYPE_SUCCESS, array('contents' => $notificationAboutTerms));
 						
-						$disableAPI = $this->getSetting($context->getId(), 'disable_API');
-						$this->notifyAboutAPIWorking($disableAPI, $notificationMgr, $currentUser);
-						
 						$notificationAboutWorking = __('plugins.generic.boriSharing.working');
 						$notificationMgr->createTrivialNotification($currentUser->getId(), NOTIFICATION_TYPE_SUCCESS, array('contents' => $notificationAboutWorking));
 
-						$this->notifyThatPluginIsWorking($request, $context);
+						$this->notifyAgencyThatPluginIsWorking($request, $context);
 					} else {
 						$form->execute();
-
-						$disableAPI = $this->getSetting($context->getId(), 'disable_API');
-						$this->notifyAboutAPIWorking($disableAPI, $notificationMgr, $currentUser);
 					}
+
+					$disableAPI = $this->getSetting($context->getId(), 'disable_API');
+					$this->notifyUserAboutAPIStatus($disableAPI, $notificationMgr, $currentUser);
+					
+					$notificationAboutAuthKey = __('plugins.generic.boriSharing.authKeyNotification');
+					$notificationMgr->createTrivialNotification($currentUser->getId(), NOTIFICATION_TYPE_SUCCESS, array('contents' => $notificationAboutAuthKey));
+
 					return new JSONMessage(true);
 				}
 
@@ -217,7 +218,7 @@ class BoriSharingPlugin extends GenericPlugin {
 
 	}
 
-	private function notifyThatPluginIsWorking($request, $context) {
+	private function notifyAgencyThatPluginIsWorking($request, $context) {
 		$journalInitials = $context->getLocalizedData('acronym');
 		$journalName = $context->getLocalizedName();
 		$journalURL = $request->getBaseUrl() . '/index.php/' . $context->getData('urlPath');
