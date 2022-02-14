@@ -31,13 +31,8 @@ class BoriSharingPlugin extends GenericPlugin {
 		
 		if (!Config::getVar('general', 'installed') || defined('RUNNING_UPGRADE')) return true;
 		if ($success && $this->getEnabled($mainContextId)) {
-			$contextId = Application::get()->getRequest()->getContext()->getId();
-			$termsAccepted = $this->getSetting($contextId, 'terms_accepted');
-
-			if(!empty($termsAccepted)) {
-				HookRegistry::register('EditorAction::recordDecision', [$this, 'shareWhenArticleApproved']);
-				HookRegistry::register('Publication::publish', array($this, 'shareWhenArticlePublished'));
-			}
+			HookRegistry::register('EditorAction::recordDecision', [$this, 'shareWhenArticleApproved']);
+			HookRegistry::register('Publication::publish', array($this, 'shareWhenArticlePublished'));
 		}
 		return $success;
 	}
@@ -59,38 +54,41 @@ class BoriSharingPlugin extends GenericPlugin {
 	}
 
 	public function shareWhenArticleApproved($hookName, $params) {
-		$editorDecision = $params[1];
-		if($editorDecision['decision'] == SUBMISSION_EDITOR_DECISION_ACCEPT) {
-			$submission = $params[0];
-			$submissionFiles = $this->getSubmissionFiles($submission);
-			$contextId = $submission->getJournalId(); 
-			
-			$boriMailClient = new BoriMailClient($this, $submission, $editorDecision, $submissionFiles);
-			$boriMailClient->sendMail();
-			
-			$disableAPI = $this->getSetting($contextId, 'disable_API');
-			if (!$disableAPI){
-				$userAuthKey = $this->getSetting($contextId, 'user_auth_key');
-				$baseUri = $this->getSetting(CONTEXT_SITE, 'base_uri');
-				$client = new Client(['base_uri' => $baseUri]);
+		$submission = $params[0];
+		$contextId = $submission->getJournalId(); 
+		$termsAccepted = $this->getSetting($contextId, 'terms_accepted');
+		
+		if(!empty($termsAccepted)) {
+			$editorDecision = $params[1];
+			if($editorDecision['decision'] == SUBMISSION_EDITOR_DECISION_ACCEPT) {
+				$submissionFiles = $this->getSubmissionFiles($submission);
 				
-				$boriAPIClient = new BoriAPIClient($userAuthKey,$client);
-				try {
-					$boriAPIClient->sendSubmissionFiles($submissionFiles);
-					$message = 'The file(s) has been sent';
-					error_log($message);
-				} catch (ClientException $e) {
-					$message = $e->getResponse()->getReasonPhrase();
-					error_log($message);
-				} catch (ConnectException $e) {
-					$message = $e->getMessage();
-					error_log($message);
-				} catch (ServerException $e){
-					$message = $e->getResponse()->getReasonPhrase();
-					error_log($message);
+				$boriMailClient = new BoriMailClient($this, $submission, $editorDecision, $submissionFiles);
+				$boriMailClient->sendMail();
+				
+				$disableAPI = $this->getSetting($contextId, 'disable_API');
+				if (!$disableAPI){
+					$userAuthKey = $this->getSetting($contextId, 'user_auth_key');
+					$baseUri = $this->getSetting(CONTEXT_SITE, 'base_uri');
+					$client = new Client(['base_uri' => $baseUri]);
+					
+					$boriAPIClient = new BoriAPIClient($userAuthKey,$client);
+					try {
+						$boriAPIClient->sendSubmissionFiles($submissionFiles);
+						$message = 'The file(s) has been sent';
+						error_log($message);
+					} catch (ClientException $e) {
+						$message = $e->getResponse()->getReasonPhrase();
+						error_log($message);
+					} catch (ConnectException $e) {
+						$message = $e->getMessage();
+						error_log($message);
+					} catch (ServerException $e){
+						$message = $e->getResponse()->getReasonPhrase();
+						error_log($message);
+					}
 				}
 			}
-
 		}
 		
 		return false;
@@ -109,22 +107,27 @@ class BoriSharingPlugin extends GenericPlugin {
 	public function shareWhenArticlePublished($hookName, $params) {
 		$publication = $params[0];
 		$submission = $params[2];
-		$submissionToShareFactory = new SubmissionToShareFactory();
-
-		$journal = DAORegistry::getDAO('JournalDAO')->getById($submission->getData('contextId'));
-		$datePublished = $publication->getData('datePublished');
-		$editor = Application::get()->getRequest()->getUser();
-		$agencyEmail = $this->getSetting(CONTEXT_SITE, 'agency_email');
+		$contextId = $submission->getData('contextId');
+		$termsAccepted = $this->getSetting($contextId, 'terms_accepted');
 		
-		$submissionToShare = $submissionToShareFactory->createPublishedSubmission($journal, $submission, $editor, $datePublished);
-
-		$mailMessageBuilder = new MailMessageBuilder($agencyEmail);
-		$mailMessageBuilder->buildEmailSender($journal->getLocalizedData('acronym'), $journal->getData('contactEmail'));
-		$mailMessageBuilder->buildSubmissionPublishedEmailSubject($submissionToShare);
-		$mailMessageBuilder->buildSubmissionPublishedEmailBody($submissionToShare);
-		
-		$mailMessage = $mailMessageBuilder->getMailMessage();
-		$mailMessage->send();
+		if(!empty($termsAccepted)) {
+			$submissionToShareFactory = new SubmissionToShareFactory();
+	
+			$journal = DAORegistry::getDAO('JournalDAO')->getById($contextId);
+			$datePublished = $publication->getData('datePublished');
+			$editor = Application::get()->getRequest()->getUser();
+			$agencyEmail = $this->getSetting(CONTEXT_SITE, 'agency_email');
+			
+			$submissionToShare = $submissionToShareFactory->createPublishedSubmission($journal, $submission, $editor, $datePublished);
+	
+			$mailMessageBuilder = new MailMessageBuilder($agencyEmail);
+			$mailMessageBuilder->buildEmailSender($journal->getLocalizedData('acronym'), $journal->getData('contactEmail'));
+			$mailMessageBuilder->buildSubmissionPublishedEmailSubject($submissionToShare);
+			$mailMessageBuilder->buildSubmissionPublishedEmailBody($submissionToShare);
+			
+			$mailMessage = $mailMessageBuilder->getMailMessage();
+			$mailMessage->send();
+		}
 	}
 
 	public function getActions($request, $actionArgs) {
